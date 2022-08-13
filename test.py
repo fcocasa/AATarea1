@@ -3,9 +3,9 @@
 import argparse
 from ast import arg
 from xmlrpc.client import Boolean
-from models.gX_l1_model import GXL1Model
-from algos.gX_l1_algo import GXL1Algo
-from training.gX_l1_train import GXL1Train
+from models.g08_l1_model import G08L1Model
+from algos.g08_l1_algo import G08L1Algo
+from training.g08_l1_train import G08L1Train
 
 import gym 
 import time
@@ -40,7 +40,7 @@ environment = wrappers.SymbolicObsWrapper(environment)
 m_kargs = {'cheat_mode': args.cheat}
 if args.model:
     m_kargs['model'] = args.model
-trained_model = GXL1Model(environment, **m_kargs)
+trained_model = G08L1Model(environment, **m_kargs)
 
 for i_run in range(0, args.runs):
     obs = environment.reset()

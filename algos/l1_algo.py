@@ -3,7 +3,7 @@ from abc import ABC, abstractmethod
 
 class L1Algo(ABC):
     """
-    Class that represent an algorithm. You will need to modify your GXL1Algorithm to your needs
+    Class that represent an algorithm. You will need to modify your G08L1Algorithm to your needs
     """
 
     def __init__(self):

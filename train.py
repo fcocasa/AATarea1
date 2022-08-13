@@ -2,9 +2,9 @@
 
 import argparse
 from ast import arg
-from models.g08_l1_model import GXL1Model
-from algos.g08_l1_algo import GXL1Algo
-from training.g08_l1_train import GXL1Train
+from models.g08_l1_model import G08L1Model
+from algos.g08_l1_algo import G08L1Algo
+from training.g08_l1_train import G08L1Train
 
 import gym
 
@@ -35,7 +35,7 @@ environment = gym.make(args.env, seed=seed, render_mode="human")
 environment.max_steps = args.steps
 environment = wrappers.SymbolicObsWrapper(environment)
 
-training = GXL1Train(environment, GXL1Algo(), GXL1Model(
+training = G08L1Train(environment, G08L1Algo(), G08L1Model(
     environment, name="g08_model"), max_runs=args.runs, max_steps=args.steps)
 
 trained_model = training.run()

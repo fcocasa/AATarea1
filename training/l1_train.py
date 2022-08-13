@@ -3,7 +3,7 @@ from abc import ABC, abstractmethod
 
 class L1Train(ABC):
     """
-    Train is done in this class. You should not touch this class, but adapt GXL1Train to your needs.
+    Train is done in this class. You should not touch this class, but adapt G08L1Train to your needs.
     """
 
     def __init__(self, environment,  algorithm, model):
@@ -65,7 +65,7 @@ class L1Train(ABC):
     @abstractmethod
     def run(self):
         """
-        Trains the model. You need to implement it in your the GXL1Train class.
+        Trains the model. You need to implement it in your the G08L1Train class.
         """
 
         pass

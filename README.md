@@ -33,5 +33,5 @@ They will run without arguments, but, please, check them and try them with diffe
 ====================================
 IMPLEMENTATION
 
-You will need to implement the algorithm, model and training method... Copy the classes GXL1Algo, GXL1Model and GXL1Train, rename it with your group number
+You will need to implement the algorithm, model and training method... Copy the classes G08L1Algo, G08L1Model and G08L1Train, rename it with your group number
  (for example, for group 99 classes will be renamed as G99L1Algo, G99L1Model, G99L1Train) and implement missing parts or adapt the code for your needs.

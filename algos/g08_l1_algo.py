@@ -1,7 +1,7 @@
 from algos.l1_algo import L1Algo
 
 
-class GXL1Algo(L1Algo):
+class G08L1Algo(L1Algo):
     """ 
     This is your algorithm. You will have to implement everything here
     """

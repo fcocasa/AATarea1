@@ -2,7 +2,7 @@ from abc import ABC, abstractmethod
 
 class L1Model(ABC):
     """
-    Class that represent an agent. You will need to modify the GXL1Model to your needs
+    Class that represent an agent. You will need to modify the G08L1Model to your needs
     """
 
     def __init__(self, environment):

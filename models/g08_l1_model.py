@@ -1,8 +1,8 @@
 import json
 from models.l1_model import L1Model
+from gym_minigrid import wrappers
 
-
-class GXL1Model(L1Model):
+class G08L1Model(L1Model):
     """
     This is a dummy implementation of the model:
 
@@ -23,8 +23,6 @@ class GXL1Model(L1Model):
         self.file_path = kwargs.get('file_path', './trained_models/')
 
         # Parameters of the model
-        # TODO: change this!
-        self.my_parm = 0
         self.gx_param = 0
         self.gy_param = 0
         self.sn_param = 0
@@ -33,32 +31,35 @@ class GXL1Model(L1Model):
         self.sw_param = 0
 
         # Let's check if cheat mode is on!
-        self.cheat_mode = kwargs.get('cheat_mode', False)
-        if self.cheat_mode:
-            self.cheat_mov = 0
-            # Load the sequence of cheat moves, or use F,F,R,F,F by default
-            self.cheat_movs = kwargs.get('cheat_movs', [
-                self.environment.actions.forward,
-                self.environment.actions.forward,
-                self.environment.actions.right,
-                self.environment.actions.forward,
-                self.environment.actions.forward
-            ])
+        # self.cheat_mode = kwargs.get('cheat_mode', False)
+        # if self.cheat_mode:
+        #     self.cheat_mov = 0
+        #     # Load the sequence of cheat moves, or use F,F,R,F,F by default
+        #     self.cheat_movs = kwargs.get('cheat_movs', [
+        #         self.environment.actions.forward,
+        #         self.environment.actions.forward,
+        #         self.environment.actions.right,
+        #         self.environment.actions.forward,
+        #         self.environment.actions.forward
+        #     ])
 
     def action(self, observation):
         """
         Selects and action to perform given the state of the world.
-        This dummy agent will select one action randomly, or, if active, an action
-        from its list of cheat actions.
         """
-        # TODO: change this dummy code!  EVALUATE ALL POSIBLE MOVEMENTS AND SELECT GREATEST SCORE
-        if self.cheat_mode:
-            # cycle the list of cheat movs
-            next_action = self.cheat_movs[self.cheat_mov]
-            self.cheat_mov = (self.cheat_mov + 1) % len(self.cheat_movs)
+
+        # Evaluate all possible movements and select greatest score
+        # TODO: arreglar, falta entender como hacer un movimiento (o sea generar un environment) a partir de un observation
+        right_action_score = self.evaluate(wrappers.SymbolicObsWrapper(environment_movderecha))
+        left_action_score = self.evaluate(wrappers.SymbolicObsWrapper(environment_movizquierda))
+        forward_action_score = self.evaluate(wrappers.SymbolicObsWrapper(environment_movadelante))
+        if right_action_score > left_action_score and right_action_score > forward_action_score:
+            next_action = self.environment.actions.right
         else:
-            # Pick a random action
-            next_action = self.environment.action_space.sample()
+            if left_action_score > forward_action_score:
+                next_action = self.environment.actions.left
+            else:
+                next_action = self.environment.actions.forward
 
         return next_action
 
@@ -67,7 +68,7 @@ class GXL1Model(L1Model):
         Evaluates the given observation and returns its value.
         """
         # TODO: change this dummy code!  EVALUAR EL TABLERO Y RETORNAR COMBINACIÓN LINEAL USANDO LOS PARAMETROS DEL MODELO
-        obs_value = self.my_parm * 5
+        obs_value = 5
 
         return obs_value
 
@@ -80,7 +81,7 @@ class GXL1Model(L1Model):
             json_config = json.load(openfile)
 
         # TODO: adapt this to your solution!
-        self.my_parm = json_config['my_parm']
+        self.gx_param = json_config['gx_param']
 
     def save(self):
         """
@@ -89,7 +90,7 @@ class GXL1Model(L1Model):
 
         # TODO: adapt this to your solution!
         model_config = {
-            'my_parm': self.my_parm
+            'gx_param': self.gx_param
         }
         json_config = json.dumps(model_config, indent=2)
 

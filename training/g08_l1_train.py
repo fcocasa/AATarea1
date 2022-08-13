@@ -3,7 +3,7 @@ from abc import ABC, abstractmethod
 from training.l1_train import L1Train
 
 
-class GXL1Train(L1Train):
+class G08L1Train(L1Train):
     """
     Train is done in this class. You will need to adapt this class to your needs.
     """
