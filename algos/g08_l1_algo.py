@@ -8,10 +8,9 @@ class GXL1Algo(L1Algo):
 
     def __init__(self, **kwargs):
         super().__init__()
-        
-        # TODO: Add metaparameters if needed!
-        # for example... learning rate?
 
+        # TODO: Add metaparameters if needed! experiment with learning rateeee
+        self.learning_rate = 0.001
 
     def fit(self, model, experiences):
         """ 
@@ -20,7 +19,7 @@ class GXL1Algo(L1Algo):
         """
 
         # TODO: Change this dummy code!
-        
+
         # Calculate new model parameters from  the experience
         new_value = 0
 

@@ -62,7 +62,7 @@ for c_shift in SOME_CELL_SHIFT:
     cell_object = IDX_TO_OBJECT[obs_cell[2]] if obs_cell[2] > -1 else 'nothing'
 
     print(f"\n\t{c_pos}: in {obs_cell} there is {cell_object}.")
-    if (c_pos == environment.agent_pos).all() and cell_object != 'agent':
+    if c_pos[0] == environment.agent_pos[0] and c_pos[1] == environment.agent_pos[1] and cell_object != 'agent':
         print(f"\tThe agent is confused with {cell_object}! :-O")
 
 
@@ -99,6 +99,9 @@ print(f"\tObservation in cell {environment.agent_pos}: {last_cell_obs}")
 print(f"\tIn that cell there is {last_object}.")
 
 # TODO calculate Gx,Gy and Fnsew
+print(f"\tENV: {environment}")
+Gx = environment.agent_pos
+print(f"\Gx: {Gx}")
 
 
 print("\nSo this is our pretty version of our final world: ")

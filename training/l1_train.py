@@ -28,7 +28,7 @@ class L1Train(ABC):
     def collect_experience(self, observation):
         """
         Performs one step in the given environment and returs the result of such experience
-        
+
         Parameters:
         ----------
         observation : last observation obtained
@@ -44,6 +44,7 @@ class L1Train(ABC):
         action = self.model.action(observation)
 
         # Perform the action
+        # Reward es un valor entre 0 y 1 que indica que tan rapido se llegó a destino
         next_observation, reward, done, _ = self.environment.step(action)
 
         # Add advantage and return to experiences
@@ -56,8 +57,7 @@ class L1Train(ABC):
             'next_observation': next_observation,
             'next_value': reward if done else next_value,
             'done': done,
-            'reward':reward
-
+            'reward': reward
         }
 
         return exp
@@ -67,5 +67,5 @@ class L1Train(ABC):
         """
         Trains the model. You need to implement it in your the GXL1Train class.
         """
-        
+
         pass

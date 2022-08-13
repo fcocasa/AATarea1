@@ -2,6 +2,7 @@ from abc import ABC, abstractmethod
 
 from training.l1_train import L1Train
 
+
 class GXL1Train(L1Train):
     """
     Train is done in this class. You will need to adapt this class to your needs.
@@ -38,11 +39,13 @@ class GXL1Train(L1Train):
                 # Store the experience for learning
                 experiences.append(experience)
 
-                print(f"run:{i_run} step:{i_step} pos:{self.environment.agent_pos} dir:{self.environment.agent_dir} done:{experience['done']} X:{experience['X']}")
+                print(
+                    f"run:{i_run} step:{i_step} pos:{self.environment.agent_pos} dir:{self.environment.agent_dir} done:{experience['done']} action:{experience['action']}")
 
                 # We finished before reaching max_steps
                 if experience['done']:
-                    print(f"Run {i_run} finished - reward {experience['next_value']}")
+                    print(
+                        f"Run {i_run} finished - reward {experience['next_value']}")
                     break
 
                 # change the observation state
@@ -53,17 +56,3 @@ class GXL1Train(L1Train):
             self.model = self.algorithm.fit(self.model, experiences)
 
         return self.model
-
-        
-        
-
-
-                
-
-
-
-
-
-
-
-

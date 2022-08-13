@@ -25,6 +25,12 @@ class GXL1Model(L1Model):
         # Parameters of the model
         # TODO: change this!
         self.my_parm = 0
+        self.gx_param = 0
+        self.gy_param = 0
+        self.sn_param = 0
+        self.ss_param = 0
+        self.se_param = 0
+        self.sw_param = 0
 
         # Let's check if cheat mode is on!
         self.cheat_mode = kwargs.get('cheat_mode', False)
@@ -39,14 +45,13 @@ class GXL1Model(L1Model):
                 self.environment.actions.forward
             ])
 
-
     def action(self, observation):
         """
         Selects and action to perform given the state of the world.
         This dummy agent will select one action randomly, or, if active, an action
         from its list of cheat actions.
-        """         
-        # TODO: change this dummy code!
+        """
+        # TODO: change this dummy code!  EVALUATE ALL POSIBLE MOVEMENTS AND SELECT GREATEST SCORE
         if self.cheat_mode:
             # cycle the list of cheat movs
             next_action = self.cheat_movs[self.cheat_mov]
@@ -57,33 +62,30 @@ class GXL1Model(L1Model):
 
         return next_action
 
-
     def evaluate(self, observation):
         """
         Evaluates the given observation and returns its value.
         """
-        # TODO: change this dummy code!
+        # TODO: change this dummy code!  EVALUAR EL TABLERO Y RETORNAR COMBINACIÓN LINEAL USANDO LOS PARAMETROS DEL MODELO
         obs_value = self.my_parm * 5
 
         return obs_value
 
-
     def load(self):
         """
         Loads the model as json to the configured dir/file_name
-        """                
-        file_name = f"{self.file_path}{self.name}.json" 
+        """
+        file_name = f"{self.file_path}{self.name}.json"
         with open(file_name, 'r') as openfile:
             json_config = json.load(openfile)
 
         # TODO: adapt this to your solution!
         self.my_parm = json_config['my_parm']
-        
 
     def save(self):
         """
         Saves the model as json to the configured dir/file_name
-        """     
+        """
 
         # TODO: adapt this to your solution!
         model_config = {
@@ -91,18 +93,14 @@ class GXL1Model(L1Model):
         }
         json_config = json.dumps(model_config, indent=2)
 
-        file_name = f"{self.file_path}{self.name}.json" 
+        file_name = f"{self.file_path}{self.name}.json"
         with open(file_name, "w") as outfile:
             outfile.write(json_config)
-
 
     def update(self, **params):
         """
         Updates the model with the given parameters
-        """        
-        # TODO: adapt this to your solution!
+        """
+        # TODO: adapt this to your solution! STOCASTIC GRADIENT DESCENT
 
         return self
-
-
-        
