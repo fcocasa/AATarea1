@@ -2,6 +2,7 @@ import json
 from models.l1_model import L1Model
 from gym_minigrid import wrappers
 
+
 class G08L1Model(L1Model):
     """
     This is a dummy implementation of the model:
@@ -25,10 +26,10 @@ class G08L1Model(L1Model):
         # Parameters of the model
         self.gx_param = 0
         self.gy_param = 0
-        self.f_param = 0
-        self.r_param = 0
-        self.l_param = 0
-        self.b_param = 0
+        self.sn_param = 0
+        self.ss_param = 0
+        self.se_param = 0
+        self.sw_param = 0
 
         # Let's check if cheat mode is on!
         # self.cheat_mode = kwargs.get('cheat_mode', False)
@@ -48,18 +49,20 @@ class G08L1Model(L1Model):
         Selects and action to perform given the state of the world.
         """
 
-        # Evaluate all possible movements and select greatest score
+        # Evaluate all possible movements and select greatest score xd
         # TODO: arreglar, falta entender como hacer un movimiento (o sea generar un environment) a partir de un observation
-        right_action_score = self.evaluate(wrappers.SymbolicObsWrapper(environment_movderecha))
-        left_action_score = self.evaluate(wrappers.SymbolicObsWrapper(environment_movizquierda))
-        forward_action_score = self.evaluate(wrappers.SymbolicObsWrapper(environment_movadelante))
+        right_action_score = self.evaluate(wrappers.SymbolicObsWrapperg))
+        left_action_score=self.evaluate(
+            wrappers.SymbolicObsWrapper(environment_movizquierda))
+        forward_action_score=self.evaluate(
+            wrappers.SymbolicObsWrapper(environment_movadelante))
         if right_action_score > left_action_score and right_action_score > forward_action_score:
-            next_action = self.environment.actions.right
+            next_action=self.environment.actions.right
         else:
             if left_action_score > forward_action_score:
-                next_action = self.environment.actions.left
+                next_action=self.environment.actions.left
             else:
-                next_action = self.environment.actions.forward
+                next_action=self.environment.actions.forward
 
         return next_action
 
@@ -68,7 +71,7 @@ class G08L1Model(L1Model):
         Evaluates the given observation and returns its value.
         """
         # TODO: change this dummy code!  EVALUAR EL TABLERO Y RETORNAR COMBINACIÓN LINEAL USANDO LOS PARAMETROS DEL MODELO
-        obs_value = 5
+        obs_value=5
 
         return obs_value
 
@@ -76,12 +79,12 @@ class G08L1Model(L1Model):
         """
         Loads the model as json to the configured dir/file_name
         """
-        file_name = f"{self.file_path}{self.name}.json"
+        file_name=f"{self.file_path}{self.name}.json"
         with open(file_name, 'r') as openfile:
-            json_config = json.load(openfile)
+            json_config=json.load(openfile)
 
         # TODO: adapt this to your solution!
-        self.gx_param = json_config['gx_param']
+        self.gx_param=json_config['gx_param']
 
     def save(self):
         """
@@ -89,7 +92,7 @@ class G08L1Model(L1Model):
         """
 
         # TODO: adapt this to your solution!
-        model_config = {
+        model_config={
             'gx_param': self.gx_param
         }
         json_config = json.dumps(model_config, indent=2)
@@ -98,20 +101,10 @@ class G08L1Model(L1Model):
         with open(file_name, "w") as outfile:
             outfile.write(json_config)
 
-    def update(self, gx, gy, f, r, l, b, **params):
-        self.gx = gx
-        self.gy = gy
-        self.f = f
-        self.r = r
-        self.l = l
-        self.b = b
-        return self
+    def update(self, **params):
         """
         Updates the model with the given parameters
         """
-        # TODO: adapt this to your solution!
+        # TODO: adapt this to your solution! STOCASTIC GRADIENT DESCENT
 
         return self
-
-    def __str__(self):
-        return f"Parameters Gx:{self.gx_param} Gy:{self.gy_param} F:{self.f_param} R:{self.r_param} B:{self.b_param} L:{self.l_param} "
