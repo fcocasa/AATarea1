@@ -6,7 +6,7 @@ class G08L1Model(L1Model):
     """
     This is a dummy implementation of the model:
 
-        - It has two modes of selecting actions: (1) randomly or (2) from a pre-defined sequence of actions. 
+        - It has two modes of selecting actions: (1) randomly or (2) from a pre-defined sequence of actions.
         This can be set with the 'cheat_mode' and 'cheat_movs' parameters.
         - It does not learn, since updates does nothing
         - In fact it doesn't store anything regarding its status but a variable "my_param"... so it's as dummy as you can get.
@@ -25,10 +25,10 @@ class G08L1Model(L1Model):
         # Parameters of the model
         self.gx_param = 0
         self.gy_param = 0
-        self.sn_param = 0
-        self.ss_param = 0
-        self.se_param = 0
-        self.sw_param = 0
+        self.f_param = 0
+        self.r_param = 0
+        self.l_param = 0
+        self.b_param = 0
 
         # Let's check if cheat mode is on!
         # self.cheat_mode = kwargs.get('cheat_mode', False)
@@ -98,10 +98,20 @@ class G08L1Model(L1Model):
         with open(file_name, "w") as outfile:
             outfile.write(json_config)
 
-    def update(self, **params):
+    def update(self, gx, gy, f, r, l, b, **params):
+        self.gx = gx
+        self.gy = gy
+        self.f = f
+        self.r = r
+        self.l = l
+        self.b = b
+        return self
         """
         Updates the model with the given parameters
         """
-        # TODO: adapt this to your solution! STOCASTIC GRADIENT DESCENT
+        # TODO: adapt this to your solution!
 
         return self
+
+    def __str__(self):
+        return f"Parameters Gx:{self.gx_param} Gy:{self.gy_param} F:{self.f_param} R:{self.r_param} B:{self.b_param} L:{self.l_param} "
