@@ -40,15 +40,15 @@ class L1Train(ABC):
         """
 
         # Choose next action
-        start_value = self.model.evaluate(observation)
-        action = self.model.action(observation)
+        start_value = self.model.evaluate(observation, self.environment)
+        action = self.model.action(observation, self.environment)
 
         # Perform the action
         # Reward es un valor entre 0 y 1 que indica que tan rapido se llegó a destino
         next_observation, reward, done, _ = self.environment.step(action)
 
         # Add advantage and return to experiences
-        next_value = self.model.evaluate(next_observation)
+        next_value = self.model.evaluate(next_observation, self.environment)
 
         exp = {
             'observation': observation,

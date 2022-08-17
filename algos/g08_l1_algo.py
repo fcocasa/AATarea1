@@ -13,19 +13,28 @@ class G08L1Algo(L1Algo):
         # TODO: Add metaparameters if needed! experiment with learning rateeee
         self.learning_rate = 0.001
 
-    def fit(self, model, experiences):
-        """ 
+    def fit(self, model, last_experience):  # we want to maximize the reward. (WIN FAST)
+        """
         Fits the given model to the new experiences.
         This is your algorithm. You will have to implement everything here
         """
-        print('model', model)
-        # print('experiences', experiences)
-        # TODO: Change this dummy code!
+        # last_experience = {
+        #     'observation': observation,
+        #     'value': start_value,
+        #     'action': action,
+        #     'next_observation': next_observation,
+        #     'next_value': reward if done else next_value,
+        #     'done': done,
+        #     'reward': reward
+        # }
 
-        # Calculate new model parameters from  the experience
-        new_value = 0
+        # new_gx= gx + self.learning_rate ()
+        # new_gy = gy + self.learning_rate()
 
-        # Upadate the model TODO : STOCHASTIC GRADIENT DESCENT (LEAST SQUARES)
-        model.update(value=new_value)
+        # new_f = f + self.learning_rate()
+        # new_f =  + self.learning_rate()
+        print('model--', model.gx_param)
+
+        # model.update(new_gx, new_gy, new_f, new_r, new_b, new_l)
 
         return model

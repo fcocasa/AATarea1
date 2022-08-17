@@ -12,7 +12,7 @@ class G08L1Train(L1Train):
         super().__init__(environment, algorithm, model)
 
         # We add max_runs and max_steps paramaters
-        self.max_runs = kwargs.get('max_runs', 1)
+        self.max_runs = kwargs.get('max_runs', 2)
         self.max_steps = kwargs.get('max_steps', 20)
 
         # TODO: Add more parameters if necessary
@@ -24,6 +24,7 @@ class G08L1Train(L1Train):
         """
 
         # Go for max_runs episodes
+        # CORRIDAS DE ENTRENAMIENTO EN LAS QUE LA IA JUEGA Y LO CORRIGEN CON fit()
         for i_run in range(0, self.max_runs):
 
             # Restart the environment
@@ -31,7 +32,8 @@ class G08L1Train(L1Train):
 
             # Go for max_steps per experiment (actually, this cna be set in the env directly)
             experiences = []
-            for i_step in range(0, self.max_steps):
+            game_rewards = []
+            for i_step in range(0, self.max_steps):  # CORRE TODO UN JUEGO
 
                 # Do a step in this world
                 experience = self.collect_experience(observation)
@@ -44,6 +46,7 @@ class G08L1Train(L1Train):
 
                 # We finished before reaching max_steps
                 if experience['done']:
+                    game_rewards.append(experience.reward)
                     print(
                         f"Run {i_run} finished - reward {experience['next_value']}")
                     break
@@ -53,6 +56,7 @@ class G08L1Train(L1Train):
 
             # Let's update the agente after each episode
             # TODO: change this to wherever you need
-            self.model = self.algorithm.fit(self.model, experiences)
+            # CREO QUE SOLO QUEREMOS EL REWARD, NO TODA LA EXPERIENCIA
+            self.model = self.algorithm.fit(self.model, game_rewards)
 
         return self.model

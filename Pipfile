@@ -4,8 +4,10 @@ verify_ssl = true
 name = "pypi"
 
 [packages]
+gym = "*"
 
 [dev-packages]
+jupyter = "*"
 
 [requires]
 python_version = "3.8"
