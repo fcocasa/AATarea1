@@ -160,17 +160,17 @@ def adjust_params(params, experience, learning_rate, error):
         experience['observation']['image'], experience['agent_pos'][0], experience['agent_pos'][1], experience['agent_dir'])
     [f, r, b, l] = walls_distance(experience['observation']['image'], experience['agent_pos']
                                   [0], experience['agent_pos'][1], experience['agent_dir'])
-    x = [gx, gy, f, r, b, l, 1]
+    x = [gx, gy, f, r, l, 1]
     # gf,gr,gl   front,right,left -> orden de parametros
     norm = 0
-    for i in range(7):
+    for i in range(6):
         params[i] = params[i] + learning_rate*error*x[i]
         norm += params[i]**2  # allows params to be within [-1,1]
 
     norm = math.sqrt(norm)
 
     # avoid overflow in params
-    for i in range(7):
+    for i in range(6):
         params[i] = params[i]/norm
 
     return params

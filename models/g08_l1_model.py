@@ -81,7 +81,7 @@ class G08L1Model(L1Model):
         # [gx, gy, gf, gr, gb, gl] = goal_distance_orientation(observation['image'], agent_pos[0], agent_pos[1], agent_dir)
 
         #values = [gf,gr,gb,gl,f,r,l,b,1]
-        values = [gx, gy, f, r, b, l, 1]
+        values = [gx, gy, f, r, l, 1]
 
         value = 0
         for i in range(6):
