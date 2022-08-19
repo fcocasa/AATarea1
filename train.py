@@ -11,13 +11,13 @@ import gym
 # This will register the gym_minigrid envs
 from gym_minigrid import envs, wrappers
 
-DEFAULT_ENV = 'MiniGrid-FourRooms-v0'#'MiniGrid-Empty-8x8-v0'
+DEFAULT_ENV = 'MiniGrid-Empty-8x8-v0'  # 'MiniGrid-Empty-8x8-v0'
 
 # Let's get the arguments
 parser = argparse.ArgumentParser()
 parser.add_argument("--env", type=str, default=DEFAULT_ENV, required=False,
                     help=F"Name of the environment (default: {DEFAULT_ENV})")
-parser.add_argument("--runs", type=int, default=50, required=False,
+parser.add_argument("--runs", type=int, default=100, required=False,
                     help="Number of experiment runs (default: 2)")
 parser.add_argument("--steps", type=int, default=20, required=False,
                     help="Number of max steps per run (default: 20)")
