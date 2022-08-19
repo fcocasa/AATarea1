@@ -79,24 +79,14 @@ class G08L1Model(L1Model):
         """
         Evaluates the given observation and returns its value.
         """
-        """print(observation)
-        [gx, gy] = goal_distance(
-            observation['image'], environment.agent_pos[0], environment.agent_pos[1])
-        [f, r, b, l] = walls_distance(
-            observation['image'], environment.agent_pos[0], environment.agent_pos[1], environment.agent_dir)
-        # linear combination"""
-
         [gx, gy] = goal_distance(observation['image'], agent_pos[0], agent_pos[1])
         [f, r, b, l] = walls_distance(observation['image'], agent_pos[0], agent_pos[1], agent_dir)
 
         # [gx, gy, gf, gr, gb, gl] = goal_distance_orientation(observation['image'], agent_pos[0], agent_pos[1], agent_dir)
-        
-        """[e, s, w, n] = walls_axis(
-            observation['image'], agent_pos[0], agent_pos[1])"""
 
         #values = [gf,gr,gb,gl,f,r,l,b,1]
         values = [gx,gy,f,r,b,l,1]
-        #gx,gy  front,right,left
+        
         value = 0
         for i in range(6):
             value += values[i]*self.params[i]

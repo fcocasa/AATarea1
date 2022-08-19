@@ -23,6 +23,7 @@ def goal_distance(observation, agent_pos_x, agent_pos_y):
         for j in range(0, l):
             if matrix_value(i, j, observation) == 8:
                 return [abs(i-agent_pos_x), abs(j-agent_pos_y)]
+    return[len(observation),len(observation)]
 
 # [wall_east,wall_south,wall_west,wall_north]
 
