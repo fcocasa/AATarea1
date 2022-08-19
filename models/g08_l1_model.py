@@ -1,9 +1,9 @@
 import json
 from models.l1_model import L1Model
-from models.aux_functions import goal_distance, walls_distance
+from aux_functions import goal_distance, walls_distance, try_forward, walls_axis, goal_distance_orientation
 from gym_minigrid import wrappers
 import numpy as np
-
+import random
 
 class G08L1Model(L1Model):
     """
@@ -26,45 +26,86 @@ class G08L1Model(L1Model):
         self.file_path = kwargs.get('file_path', './trained_models/')
 
         # Parameters of the model TODO: check gx and gy should be bigger to step out max_mov value in Hypotesis space
-        self.gx_param = 0.5
-        self.gy_param = 0.5
-        self.f_param = 0.1
-        self.r_param = 0.1
-        self.b_param = 0.1
-        self.l_param = 0.1
 
-    def action(self, observation, environment):
+        self.load()
+
+        
+
+    def action(self, observation, environment, type):# type es pra hacer mov random
         """
         Selects and action to perform given the state of the world.
         """
-        print(observation)
-        # Evaluate all possible movements and select greatest score
-        # TODO: arreglar, falta entender como hacer un movimiento (o sea generar un environment) a partir de un observation
-        # right_action_score = self.evaluate(wrappers.SymbolicObsWrapper(environment_movderecha))
-        # left_action_score = self.evaluate(wrappers.SymbolicObsWrapper(environment_movizquierda))
-        # forward_action_score = self.evaluate(wrappers.SymbolicObsWrapper(environment_movadelante))
-        # if right_action_score > left_action_score and right_action_score > forward_action_score:
-        #     next_action = self.environment.actions.right
-        # else:
-        #     if left_action_score > forward_action_score:
-        #         next_action = self.environment.actions.left
-        #     else:
-        #         next_action = self.environment.actions.forward
+        if type == 0:
+            agent_current_pos = environment.agent_pos
+            agent_current_dir = environment.agent_dir
+            # 0 f, 1 r, 2 b, 3 l
+            value_left = self.evaluate(observation, agent_current_pos, (agent_current_dir-1)%4)
+            
+            value_right = self.evaluate(observation, agent_current_pos, (agent_current_dir+1)%4)
+            
+            new_agent_pos = try_forward(observation['image'],agent_current_pos,agent_current_dir)
+            # print('new_agent_pos')
+            # print(new_agent_pos)
+            # print('agent_pos')
+            # print(agent_current_pos)
+            if new_agent_pos[0] != agent_current_pos[0] or new_agent_pos[1] != agent_current_pos[1] :
+                value_forward = self.evaluate(observation, new_agent_pos, agent_current_dir)
+            else:
+                value_forward=min(value_left,value_right)
 
-        # return next_action
-        return 0
+            if value_left == max(value_left,value_right,value_forward):
+                print('left')
+                return self.environment.actions.left
+            elif value_right == max(value_left,value_right,value_forward):
+                print('right')
+                return self.environment.actions.right
+            else:
+                print('forward')
+                return self.environment.actions.forward
 
-    def evaluate(self, observation, environment):
+            # if value_forward == max(value_left,value_right,value_forward):
+            #     print('foward')
+            #     return self.environment.actions.forward
+            # else:
+            #     print('right or left')
+            #     moves = [self.environment.actions.left,self.environment.actions.right]
+            #     return random.choice(moves)
+        else:#type random move
+            moves = [self.environment.actions.left,self.environment.actions.right,self.environment.actions.forward]
+            return random.choice(moves)
+
+
+    def evaluate(self, observation, agent_pos, agent_dir):#evaluate(self, observation, environment):
         """
         Evaluates the given observation and returns its value.
         """
-        print(observation)
+        """print(observation)
         [gx, gy] = goal_distance(
             observation['image'], environment.agent_pos[0], environment.agent_pos[1])
         [f, r, b, l] = walls_distance(
             observation['image'], environment.agent_pos[0], environment.agent_pos[1], environment.agent_dir)
-        # linear combination
-        return gx*self.gx_param + gy*self.gy_param + f*self.f_param + b*self.b_param + l*self.l_param + r*self.r_param
+        # linear combination"""
+
+        [gx, gy] = goal_distance(observation['image'], agent_pos[0], agent_pos[1])
+        [f, r, b, l] = walls_distance(observation['image'], agent_pos[0], agent_pos[1], agent_dir)
+
+        # [gx, gy, gf, gr, gb, gl] = goal_distance_orientation(observation['image'], agent_pos[0], agent_pos[1], agent_dir)
+        
+        """[e, s, w, n] = walls_axis(
+            observation['image'], agent_pos[0], agent_pos[1])"""
+
+        #values = [gf,gr,gb,gl,f,r,l,b,1]
+        values = [gx,gy,f,r,b,l,1]
+        #gx,gy  front,right,left
+        value = 0
+        for i in range(6):
+            value += values[i]*self.params[i]
+
+        return value
+
+        #return gf*self.gf_param+ gb*self.gb_param+gl*self.gl_param + gl*self.gl_param + e*self.e_param + s*self.s_param + w*self.w_param + n*self.n_param + self.independent_term
+        #return gx*self.gx_param + gy*self.gy_param + f*self.f_param + b*self.b_param + l*self.l_param + r*self.r_param + self.independent_term
+        #return gf*self.gf_param+ gb*self.gb_param+gl*self.gl_param + gl*self.gl_param + f*self.f_param + b*self.b_param + l*self.l_param + r*self.r_param + self.independent_term
 
     def load(self):
         """
@@ -73,12 +114,7 @@ class G08L1Model(L1Model):
         file_name = f"{self.file_path}{self.name}.json"
         with open(file_name, 'r') as openfile:
             json_config = json.load(openfile)
-            self.gx_param = json_config['gx_param']
-            self.gy_param = json_config['gy_param']
-            self.f_param = json_config['f_param']
-            self.r_param = json_config['r_param']
-            self.b_param = json_config['b_param']
-            self.l_param = json_config['l_param']
+            self.params = json_config['params']
 
     def save(self):
         """
@@ -87,7 +123,7 @@ class G08L1Model(L1Model):
 
         # TODO: adapt this to your solution!
         model_config = {
-            'gx_param': self.gx_param
+            'params':self.params
         }
         json_config = json.dumps(model_config, indent=2)
 
@@ -95,13 +131,9 @@ class G08L1Model(L1Model):
         with open(file_name, "w") as outfile:
             outfile.write(json_config)
 
-    def update(self, gx, gy, f, r, b, l, **params):
-        self.gx = gx
-        self.gy = gy
-        self.f = f
-        self.r = r
-        self.l = l
-        self.b = b
+    def update(parameters, **params):
+        for i in range(len(parameters)):
+            self.params[i] = parameters[i]
         return self
 
     def __str__(self):
