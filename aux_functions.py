@@ -72,7 +72,7 @@ def walls_axis(observation, agent_pos_x, agent_pos_y):
     wall = []
     curiosity = 3
     for i in range(agent_pos_x, l):
-        if matrix_value(i, agent_pos_y, observation) == 2 or matrix_value(i, agent_pos_y, observation) == 9 or matrix_value(agent_pos_x, j, observation) == 0:  # wall, lava or unseen
+        if matrix_value(i, agent_pos_y, observation) == 2 or matrix_value(i, agent_pos_y, observation) == 9 or matrix_value(i, agent_pos_y, observation) == 0:  # wall, lava or unseen
             wall.append(i-agent_pos_x)
             break
         # unseen # TODO: check var curiosity
