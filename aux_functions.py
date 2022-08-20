@@ -72,7 +72,7 @@ def walls_axis(observation, agent_pos_x, agent_pos_y):
     wall = []
     curiosity = 3
     for i in range(agent_pos_x, l):
-        if matrix_value(i, agent_pos_y, observation) == 2 or matrix_value(i, agent_pos_y, observation) == 9:  # wall or lava
+        if matrix_value(i, agent_pos_y, observation) == 2 or matrix_value(i, agent_pos_y, observation) == 9 or matrix_value(agent_pos_x, j, observation) == 0:  # wall, lava or unseen
             wall.append(i-agent_pos_x)
             break
         # unseen # TODO: check var curiosity
@@ -80,7 +80,7 @@ def walls_axis(observation, agent_pos_x, agent_pos_y):
             wall.append(i-agent_pos_x + curiosity)
             break
     for j in range(agent_pos_y, l):
-        if matrix_value(agent_pos_x, j, observation) == 2 or matrix_value(i, agent_pos_y, observation) == 9:  # wall or lava
+        if matrix_value(agent_pos_x, j, observation) == 2 or matrix_value(i, agent_pos_y, observation) == 9 or matrix_value(agent_pos_x, j, observation) == 0:  # wall, lava or unseen
             wall.append(j-agent_pos_y)
             break
         elif matrix_value(agent_pos_x, j, observation) == 0:  # unseen
@@ -88,7 +88,7 @@ def walls_axis(observation, agent_pos_x, agent_pos_y):
             break
 
     for i in range(agent_pos_x, -1, -1):
-        if matrix_value(i, agent_pos_y, observation) == 2 or matrix_value(i, agent_pos_y, observation) == 9:  # wall or lava
+        if matrix_value(i, agent_pos_y, observation) == 2 or matrix_value(i, agent_pos_y, observation) == 9 or matrix_value(agent_pos_x, j, observation) == 0:  # wall, lava or unseen
             wall.append(agent_pos_x-i)
             break
         elif matrix_value(i, agent_pos_y, observation) == 0:  # unseen
@@ -96,7 +96,7 @@ def walls_axis(observation, agent_pos_x, agent_pos_y):
             break
 
     for j in range(agent_pos_y, -1, -1):
-        if matrix_value(agent_pos_x, j, observation) == 2 or matrix_value(agent_pos_x, j, observation) == 9:  # wall or lava
+        if matrix_value(agent_pos_x, j, observation) == 2 or matrix_value(agent_pos_x, j, observation) == 9 or matrix_value(agent_pos_x, j, observation) == 0:  # wall, lava or unseen
             wall.append(agent_pos_y-j)
             break
         elif matrix_value(agent_pos_x, j, observation) == 0:  # unseen
