@@ -11,7 +11,15 @@ import gym
 # This will register the gym_minigrid envs
 from gym_minigrid import envs, wrappers
 
-DEFAULT_ENV = 'MiniGrid-LavaGapS5-v0'  # 'MiniGrid-Empty-8x8-v0'
+DEFAULT_ENV = 'MiniGrid-FourRooms-v0'  # 'MiniGrid-Empty-8x8-v0'
+# MiniGrid-Empty-5x5-v0
+# MiniGrid-Empty-Random-5x5-v0
+# MiniGrid-Empty-6x6-v0
+# MiniGrid-Empty-Random-6x6-v0
+# MiniGrid-Empty-8x8-v0
+# MiniGrid-Empty-16x16-v0
+
+# MiniGrid-FourRooms-v0
 
 # Let's get the arguments
 parser = argparse.ArgumentParser()

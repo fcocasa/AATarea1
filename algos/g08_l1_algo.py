@@ -40,13 +40,27 @@ class G08L1Algo(L1Algo):
             v_train = -1 + self.closeness_reward/taxi
             print('v_train', v_train)
 
+        misma_pos = -1
+        ultima_pos = experiences[-1]['agent_pos']
+
         for i in range(len(experiences)-1, -1, -1):  # recorro el arreglo en sentido inverso
             v_actual = model.evaluate(
                 experiences[i]['observation'], experiences[i]['agent_pos'], experiences[i]['agent_dir'])
             model.params = adjust_params(
                 model.params, experiences[i], self.learning_rate, v_train-v_actual)
-            v_train = v_train * self.discount_factor
-            # v_train = model.evaluate(experiences[i]['observation'], experiences[i]['agent_pos'], experiences[i]['agent_dir'])
+
+            if (ultima_pos[0] == experiences[i]['agent_pos'][0] and ultima_pos[1] == experiences[i]['agent_pos'][1]):
+                misma_pos += 1
+            else:
+                misma_pos = 0
+
+            ultima_pos = experiences[i]['agent_pos']
+
+            if (misma_pos >= 3):
+                v_train = v_train
+            else:
+                v_train = v_train * self.discount_factor
+
         print('model.params')
         print(model.params)
 
