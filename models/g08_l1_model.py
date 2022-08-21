@@ -25,51 +25,45 @@ class G08L1Model(L1Model):
         # Values to load/store the model
         self.name = kwargs.get('name', 'my_model')
         self.file_path = kwargs.get('file_path', './trained_models/')
-
+        self.last_action_forward = 0
         self.load()
 
-    def action(self, observation, environment, type):  # type es pra hacer mov random
+    def action(self, observation, environment):
+        print('observation', observation)
         """
         Selects and action to perform given the state of the world.
         """
         agent_current_pos = environment.agent_pos  # x,y
         agent_current_dir = environment.agent_dir  # 0 f, 1 r, 2 b, 3 l
         value_left = self.evaluate(
-            observation, agent_current_pos, (agent_current_dir-1) % 4)
+            observation, agent_current_pos, (agent_current_dir-1) % 4, self.last_action_forward)
 
         value_right = self.evaluate(
-            observation, agent_current_pos, (agent_current_dir+1) % 4)
+            observation, agent_current_pos, (agent_current_dir+1) % 4, self.last_action_forward)
 
         new_agent_pos = try_forward(
             observation['image'], agent_current_pos, agent_current_dir)
 
         if new_agent_pos[0] != agent_current_pos[0] or new_agent_pos[1] != agent_current_pos[1]:
             value_forward = self.evaluate(
-                observation, new_agent_pos, agent_current_dir)
+                observation, new_agent_pos, agent_current_dir, 0)
         else:
             value_forward = min(value_left, value_right)  # TODO CHHECK IF OK
 
         if value_forward == max(value_left, value_right, value_forward):
             print('forward')
+            self.last_action_forward = 0
             return self.environment.actions.forward
-        elif value_right == value_left:
-            print('Random ->')
-            if random.choice([True, False]):
-                print('left')
-                return self.environment.actions.left
-            else:
-                print('right')
-                return self.environment.actions.right
         elif value_right == max(value_left, value_right, value_forward):
-            print('right')
+            self.last_action_forward += 1
             return self.environment.actions.right
         else:
-            print('left')
+            self.last_action_forward += 1
             return self.environment.actions.left
 
     # evaluate(self, observation, environment):
 
-    def evaluate(self, observation, agent_pos, agent_dir):
+    def evaluate(self, observation, agent_pos, agent_dir, last_action_forward):
         """
         Evaluates the given observation and returns its value.
         """
@@ -81,10 +75,10 @@ class G08L1Model(L1Model):
         # [gx, gy, gf, gr, gb, gl] = goal_distance_orientation(observation['image'], agent_pos[0], agent_pos[1], agent_dir)
 
         #values = [gf,gr,gb,gl,f,r,l,b,1]
-        values = [gx, gy, f, r, l, 1]
+        values = [gx, gy, f, r, l, last_action_forward, 1]
 
         value = 0
-        for i in range(6):
+        for i in range(len(values)):
             value += values[i]*self.params[i]
 
         return value

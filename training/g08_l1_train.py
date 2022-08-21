@@ -1,7 +1,7 @@
 from abc import ABC, abstractmethod
 
 from training.l1_train import L1Train
-
+import time
 from aux_functions import print_world
 
 
@@ -28,7 +28,6 @@ class G08L1Train(L1Train):
         # CORRIDAS DE ENTRENAMIENTO EN LAS QUE LA IA JUEGA Y LO CORRIGEN CON fit()
 
 
-            
 ######################################################################################
 ######################################################################################
         # for i_run in range(0, self.max_runs):
@@ -70,7 +69,7 @@ class G08L1Train(L1Train):
 ######################################################################################
 
         for i_run in range(0, self.max_runs):
-            print('max runs: '+ str(self.max_runs))
+            print('max runs: ' + str(self.max_runs))
             print(i_run)
             # Restart the environment
             observation = self.environment.reset()
@@ -88,7 +87,9 @@ class G08L1Train(L1Train):
 
                 print(
                     f"run:{i_run} step:{i_step} pos:{self.environment.agent_pos} dir:{self.environment.agent_dir} done:{experience['done']} action:{experience['action']}")
-                print_world(observation['image'], self.environment.agent_dir, self.environment.agent_pos)
+                # print_world(observation['image'], self.environment.agent_dir, self.environment.agent_pos)
+                self.environment.render()
+                # time.sleep(0.1)
                 # We finished before reaching max_steps
                 if experience['done']:
                     game_rewards.append(experience['reward'])
@@ -103,6 +104,5 @@ class G08L1Train(L1Train):
             # TODO: change this to wherever you need
             # CREO QUE SOLO QUEREMOS EL REWARD, NO TODA LA EXPERIENCIA
             self.model = self.algorithm.fit(self.model, experiences)
-
 
         return self.model

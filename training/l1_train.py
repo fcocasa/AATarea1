@@ -24,47 +24,51 @@ class L1Train(ABC):
         self.environment = environment
         self.algorithm = algorithm
         self.model = model
+        self.last_action_forward = 0
 
 ######################################################################################
 ######################################################################################
     def collect_experience_random(self, observation):
-            """
-            Performs one step in the given environment and returs the result of such experience
+        """
+        Performs one step in the given environment and returs the result of such experience
 
-            Parameters:
-            ----------
-            observation : last observation obtained
+        Parameters:
+        ----------
+        observation : last observation obtained
 
-            Returns
-            -------
-            exp :  dictionary with the result of asking an action to the model for the given observation and 
-            see the result in the given environment 
-            """
+        Returns
+        -------
+        exp :  dictionary with the result of asking an action to the model for the given observation and 
+        see the result in the given environment 
+        """
 
-            # Choose next action
-            start_value = self.model.evaluate(observation, self.environment.agent_pos, self.environment.agent_dir)
-            action = self.model.action(observation, self.environment,1) #radom move, tipo 1
+        # Choose next action
+        start_value = self.model.evaluate(
+            observation, self.environment.agent_pos, self.environment.agent_dir)
+        action = self.model.action(
+            observation, self.environment, 1)  # radom move, tipo 1
 
-            # Perform the action
-            # Reward es un valor entre 0 y 1 que indica que tan rapido se llegó a destino
-            next_observation, reward, done, _ = self.environment.step(action)
+        # Perform the action
+        # Reward es un valor entre 0 y 1 que indica que tan rapido se llegó a destino
+        next_observation, reward, done, _ = self.environment.step(action)
 
-            # Add advantage and return to experiences
-            next_value = self.model.evaluate(next_observation, self.environment.agent_pos, self.environment.agent_dir)
+        # Add advantage and return to experiences
+        next_value = self.model.evaluate(
+            next_observation, self.environment.agent_pos, self.environment.agent_dir)
 
-            exp = {
-                'observation': observation,
-                'agent_pos': self.environment.agent_pos,
-                'agent_dir': self.environment.agent_dir,
-                'value': start_value,
-                'action': action,
-                'next_observation': next_observation,
-                'next_value': reward if done else next_value,
-                'done': done,
-                'reward': reward
-            }
+        exp = {
+            'observation': observation,
+            'agent_pos': self.environment.agent_pos,
+            'agent_dir': self.environment.agent_dir,
+            'value': start_value,
+            'action': action,
+            'next_observation': next_observation,
+            'next_value': reward if done else next_value,
+            'done': done,
+            'reward': reward
+        }
 
-            return exp
+        return exp
 
 ######################################################################################
 ######################################################################################
@@ -84,15 +88,17 @@ class L1Train(ABC):
         """
 
         # Choose next action
-        start_value = self.model.evaluate(observation, self.environment.agent_pos, self.environment.agent_dir)
-        action = self.model.action(observation, self.environment, 0)
+        start_value = self.model.evaluate(
+            observation, self.environment.agent_pos, self.environment.agent_dir, self.last_action_forward)
+        action = self.model.action(observation, self.environment)
 
         # Perform the action
         # Reward es un valor entre 0 y 1 que indica que tan rapido se llegó a destino
         next_observation, reward, done, _ = self.environment.step(action)
 
         # Add advantage and return to experiences
-        next_value = self.model.evaluate(next_observation, self.environment.agent_pos, self.environment.agent_dir)
+        next_value = self.model.evaluate(
+            next_observation, self.environment.agent_pos, self.environment.agent_dir, self.last_action_forward)
 
         exp = {
             'observation': observation,

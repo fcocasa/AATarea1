@@ -6,7 +6,6 @@ AGENT_DIR_TO_STR = {0: ">", 1: "V", 2: "<", 3: "^"}
 
 
 def print_world(image, agent_dir, agent_pos):
-    # time.sleep(0.1)
     for y_axis in image:
         print("\n\t")
         for cell in y_axis:
@@ -70,21 +69,20 @@ def goal_distance_orientation(observation, agent_pos_x, agent_pos_y, agent_dir):
 def walls_axis(observation, agent_pos_x, agent_pos_y):
     l = len(observation)
     wall = []
-    curiosity = 3
     for i in range(agent_pos_x, l):
         if matrix_value(i, agent_pos_y, observation) == 2 or matrix_value(i, agent_pos_y, observation) == 9 or matrix_value(i, agent_pos_y, observation) == 0:  # wall, lava or unseen
             wall.append(i-agent_pos_x)
             break
-        # unseen # TODO: check var curiosity
+
         elif matrix_value(i, agent_pos_y, observation) == 0:
-            wall.append(i-agent_pos_x + curiosity)
+            wall.append(i-agent_pos_x)
             break
     for j in range(agent_pos_y, l):
         if matrix_value(agent_pos_x, j, observation) == 2 or matrix_value(i, agent_pos_y, observation) == 9 or matrix_value(agent_pos_x, j, observation) == 0:  # wall, lava or unseen
             wall.append(j-agent_pos_y)
             break
         elif matrix_value(agent_pos_x, j, observation) == 0:  # unseen
-            wall.append(j-agent_pos_y + curiosity)
+            wall.append(j-agent_pos_y)
             break
 
     for i in range(agent_pos_x, -1, -1):
@@ -92,7 +90,7 @@ def walls_axis(observation, agent_pos_x, agent_pos_y):
             wall.append(agent_pos_x-i)
             break
         elif matrix_value(i, agent_pos_y, observation) == 0:  # unseen
-            wall.append(agent_pos_x-i + curiosity)
+            wall.append(agent_pos_x-i)
             break
 
     for j in range(agent_pos_y, -1, -1):
@@ -100,7 +98,7 @@ def walls_axis(observation, agent_pos_x, agent_pos_y):
             wall.append(agent_pos_y-j)
             break
         elif matrix_value(agent_pos_x, j, observation) == 0:  # unseen
-            wall.append(agent_pos_y-j + curiosity)
+            wall.append(agent_pos_y-j)
             break
 
     return wall
