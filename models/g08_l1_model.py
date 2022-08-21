@@ -33,25 +33,25 @@ class G08L1Model(L1Model):
         """
         Selects and action to perform given the state of the world.
         """
+
         agent_current_pos = environment.agent_pos  # x,y
         agent_current_dir = environment.agent_dir  # 0 f, 1 r, 2 b, 3 l
         value_left = self.evaluate(
-            observation, agent_current_pos, (agent_current_dir-1) % 4, self.last_action_forward)
+            observation, agent_current_pos, (agent_current_dir-1) % 4)
 
         value_right = self.evaluate(
-            observation, agent_current_pos, (agent_current_dir+1) % 4, self.last_action_forward)
+            observation, agent_current_pos, (agent_current_dir+1) % 4)
 
         new_agent_pos = try_forward(
             observation['image'], agent_current_pos, agent_current_dir)
 
         if new_agent_pos[0] != agent_current_pos[0] or new_agent_pos[1] != agent_current_pos[1]:
             value_forward = self.evaluate(
-                observation, new_agent_pos, agent_current_dir, 0)
+                observation, new_agent_pos, agent_current_dir)
         else:
             value_forward = min(value_left, value_right)  # TODO CHHECK IF OK
 
         if value_forward == max(value_left, value_right, value_forward):
-            print('forward')
             self.last_action_forward = 0
             return self.environment.actions.forward
         elif value_right == max(value_left, value_right, value_forward):
@@ -63,7 +63,7 @@ class G08L1Model(L1Model):
 
     # evaluate(self, observation, environment):
 
-    def evaluate(self, observation, agent_pos, agent_dir, last_action_forward):
+    def evaluate(self, observation, agent_pos, agent_dir):
         """
         Evaluates the given observation and returns its value.
         """
@@ -75,7 +75,7 @@ class G08L1Model(L1Model):
         # [gx, gy, gf, gr, gb, gl] = goal_distance_orientation(observation['image'], agent_pos[0], agent_pos[1], agent_dir)
 
         #values = [gf,gr,gb,gl,f,r,l,b,1]
-        values = [gx, gy, f, r, l, last_action_forward, 1]
+        values = [gx, gy, f, r, l, 1]
 
         value = 0
         for i in range(len(values)):
