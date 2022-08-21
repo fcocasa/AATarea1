@@ -1,6 +1,5 @@
 from abc import ABC, abstractmethod
 import random
-import time
 
 
 class L1Train(ABC):
@@ -26,7 +25,7 @@ class L1Train(ABC):
         self.environment = environment
         self.algorithm = algorithm
         self.model = model
-        self.randomness = 0.2  # 0 - deterministic, 1 - fully random
+        self.random_forward = 0.4  # 0 - deterministic, 1 - always moves forward
         self.randomness_cooldown = 0.7
 
     def collect_experience(self, observation):
@@ -48,8 +47,7 @@ class L1Train(ABC):
             observation, self.environment.agent_pos, self.environment.agent_dir)
         action = self.model.action(observation, self.environment)
 
-        if random.uniform(0, 1) <= self.randomness:
-            time.sleep(0.2)
+        if random.uniform(0, 1) <= self.random_forward:
             action = random.choice(
                 [self.environment.actions.right, self.environment.actions.forward, self.environment.actions.left])
 
@@ -58,7 +56,7 @@ class L1Train(ABC):
         next_observation, reward, done, _ = self.environment.step(action)
 
         if reward > 0:
-            self.randomness = self.randomness*self.randomness_cooldown
+            self.random_forward = self.random_forward*self.randomness_cooldown
 
         # Add advantage and return to experiences
         next_value = self.model.evaluate(

@@ -1,6 +1,7 @@
+import math
 from algos.l1_algo import L1Algo
 import numpy as np
-from aux_functions import adjust_params, goal_distance
+from aux_functions import adjust_params, goal_step_distance
 import time
 
 
@@ -11,7 +12,7 @@ class G08L1Algo(L1Algo):
 
     def __init__(self, **kwargs):
         super().__init__()
-        self.learning_rate = 0.1
+        self.learning_rate = 0.4
         # 0 =we do not care if you lose but are close to goal, 1= we do care
         self.closeness_reward = 0.8
         self.discount_factor = 0.9
@@ -33,9 +34,10 @@ class G08L1Algo(L1Algo):
             print(experiences[-1]['reward'])
         else:
             print('----------perdi----------')
-            [gx, gy] = goal_distance(experiences[-1]['observation']['image'],
-                                     experiences[-1]['agent_pos'][0], experiences[-1]['agent_pos'][1])
+            [gx, gy] = goal_step_distance(experiences[-1]['observation']['image'],
+                                          experiences[-1]['agent_pos'][0], experiences[-1]['agent_pos'][1], experiences[-1]['agent_dir'])
             taxi = gx + gy  # [1, world_len*world_len]
+            eucl = math.sqrt(gx*gx + gy*gy)
             # nocion de cercania para la penalizacion, si no quedo lejos, no penalizo "tanto"
             v_train = -1 + self.closeness_reward/taxi
 

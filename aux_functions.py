@@ -17,16 +17,47 @@ def print_world(image, agent_dir, agent_pos):
 def matrix_value(i, j, matrix):  # USES X,Y NOTATION
     return matrix[j][i][2]
 
+# agent_dir [0,1,2,3] = [wall_east,wall_south,wall_west,wall_north]
 
-def goal_distance(observation, agent_pos_x, agent_pos_y):
+
+def goal_step_distance(observation, agent_pos_x, agent_pos_y, agent_dir):
     l = len(observation)
     for i in range(0, l):
         for j in range(0, l):
             if matrix_value(i, j, observation) == 8:
-                return [abs(i-agent_pos_x), abs(j-agent_pos_y)]
-    return[len(observation), len(observation)]
+                # we add extra steps needed when not aligned to the direction of the goal
+                if i-agent_pos_x > 0:  # >>>>>
+                    if agent_dir == 0:  # >
+                        extra_step_x = 0
+                    elif agent_dir == 1 or agent_dir == 3:  # ^ v
+                        extra_step_x = 1
+                    else:
+                        extra_step_x = 2  # <
+                else:                  # <<<<<
+                    if agent_dir == 0:  # >
+                        extra_step_x = 2
+                    elif agent_dir == 1 or agent_dir == 3:  # ^ v
+                        extra_step_x = 1
+                    else:
+                        extra_step_x = 0  # <
 
-# [wall_east,wall_south,wall_west,wall_north]
+                if j-agent_pos_y > 0:  # vvvvvv
+                    if agent_dir == 1:  # v
+                        extra_step_y = 0
+                    elif agent_dir == 0 or agent_dir == 2:  # < >
+                        extra_step_y = 1
+                    else:
+                        extra_step_y = 2  # ^
+                else:                   # ^^^^^
+                    if agent_dir == 1:  # v
+                        extra_step_y = 2
+                    elif agent_dir == 0 or agent_dir == 2:  # < >
+                        extra_step_y = 1
+                    else:
+                        extra_step_y = 0  # ^
+
+                return [abs(i-agent_pos_x)+extra_step_x, abs(j-agent_pos_y)+extra_step_y]
+    return[len(observation), len(observation)]
 
 
 def goal_distance_orientation(observation, agent_pos_x, agent_pos_y, agent_dir):
@@ -121,7 +152,7 @@ def walls_distance(observation, agent_pos_x, agent_pos_y, agent_dir):
 
 def try_forward(observation, agent_pos, agent_dir):
     # print(observation)
-    #(este, sur, oeste, norte)
+    # (este, sur, oeste, norte)
     if (agent_dir == 0):  # derecha
         if(matrix_value(agent_pos[0]+1, agent_pos[1], observation) != 2):
             return [agent_pos[0]+1, agent_pos[1]]
@@ -139,6 +170,46 @@ def try_forward(observation, agent_pos, agent_dir):
     si le sumo entonces bajo
     """
     return agent_pos  # en caso de no entrar a uno de los if retorno el mismo agent_pos
+
+
+# even if i setp into lava or through a wall
+def move_forward(observation, agent_pos, agent_dir):
+    # print(observation)
+    # (este, sur, oeste, norte)
+    if (agent_dir == 0):  # derecha
+        return [agent_pos[0]+1, agent_pos[1]]
+    elif(agent_dir == 2):  # izquierda
+        return [agent_pos[0]-1, agent_pos[1]]
+    elif(agent_dir == 1):  # abajo
+        return [agent_pos[0], agent_pos[1]+1]
+    elif(agent_dir == 3):  # arriba
+        return [agent_pos[0], agent_pos[1]-1]
+# even if i setp into lava or through a wall
+
+
+def steps_over(observation, agent_pos):
+    # returns if we are stepping on lava o over a wall
+    return matrix_value(agent_pos[0], agent_pos[1], observation) == 2 or matrix_value(
+        agent_pos[0]+1, agent_pos[1], observation) == 9
+
+
+def do_i_step_out_of_floor(observation, agent_pos, agent_dir):
+    # print(observation)
+    # (este, sur, oeste, norte)
+    if (agent_dir == 0):  # derecha
+        if matrix_value(agent_pos[0]+1, agent_pos[1], observation) == 2 or matrix_value(agent_pos[0]+1, agent_pos[1], observation) == 9:
+            return 1
+    elif(agent_dir == 2):  # izquierda
+        if matrix_value(agent_pos[0]-1, agent_pos[1], observation) == 2 or matrix_value(agent_pos[0]-1, agent_pos[1], observation) == 9:
+            return 1
+    elif(agent_dir == 1):  # abajo
+        if matrix_value(agent_pos[0], agent_pos[1]+1, observation) == 2 or matrix_value(agent_pos[0], agent_pos[1]+1, observation) == 9:
+            return 1
+    elif(agent_dir == 3):  # arriba
+        if matrix_value(agent_pos[0], agent_pos[1]-1, observation) == 2 or matrix_value(agent_pos[0], agent_pos[1]-1, observation) == 9:
+            return 1
+
+    return 0  # you keep walking on the floor
 
   # last_experience = {
     #     'observation': observation,
@@ -158,17 +229,19 @@ def adjust_params(params, experience, learning_rate, error):
         experience['observation']['image'], experience['agent_pos'][0], experience['agent_pos'][1], experience['agent_dir'])
     [f, r, b, l] = walls_distance(experience['observation']['image'], experience['agent_pos']
                                   [0], experience['agent_pos'][1], experience['agent_dir'])
-    x = [gx, gy, f, r, l, 1]
+    s = steps_over(experience['observation']['image'], experience['agent_pos'])
+    x = [gx, gy, f, r, 1]
+    print('F----', f)
     # gf,gr,gl   front,right,left -> orden de parametros
     norm = 0
-    for i in range(6):
+    for i in range(len(x)):
         params[i] = params[i] + learning_rate*error*x[i]
         norm += params[i]**2  # allows params to be within [-1,1]
 
     norm = math.sqrt(norm)
 
     # avoid overflow in params
-    for i in range(6):
+    for i in range(len(x)):
         params[i] = params[i]/norm
 
     return params
