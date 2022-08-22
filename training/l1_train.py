@@ -47,7 +47,7 @@ class L1Train(ABC):
             observation, self.environment.agent_pos, self.environment.agent_dir, visibility)
         action = self.model.action(observation, self.environment, visibility)
 
-        if random.uniform(0, 1) <= self.randomness:
+        if random.uniform(0, 1) <= self.random_forward:
             action = random.choice(
                 [self.environment.actions.right, self.environment.actions.forward, self.environment.actions.left])
 
