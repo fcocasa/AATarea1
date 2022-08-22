@@ -1,2 +1,0 @@
-23:36  up 22 days, 10:22, 6 users, load averages: 4.92 4.37 3.97
-USER     TTY      FROM              LOGIN@  IDLE WHAT

@@ -1,6 +1,5 @@
 from abc import ABC, abstractmethod
 import random
-import time
 
 
 class L1Train(ABC):
@@ -57,7 +56,7 @@ class L1Train(ABC):
         next_observation, reward, done, _ = self.environment.step(action)
 
         if reward > 0:
-            self.randomness = self.randomness*self.randomness_cooldown
+            self.random_forward = self.random_forward*self.randomness_cooldown
 
         # Add advantage and return to experiences
         next_value = self.model.evaluate(

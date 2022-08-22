@@ -43,7 +43,7 @@ class G08L1Train(L1Train):
 
                 print(
                     f"run:{i_run} step:{i_step} pos:{self.environment.agent_pos} dir:{self.environment.agent_dir} done:{experience['done']} action:{experience['action']}")
-                # print_world(observation['image'], self.environment.agent_dir, self.environment.agent_pos)
+                #print_world(observation['image'], self.environment.agent_dir, self.environment.agent_pos)
                 self.environment.render()
                 time.sleep(0.005)
                 # We finished before reaching max_steps
