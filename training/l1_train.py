@@ -26,8 +26,8 @@ class L1Train(ABC):
         self.environment = environment
         self.algorithm = algorithm
         self.model = model
-        self.randomness = 0.2  # 0 - deterministic, 1 - fully random
-        self.randomness_cooldown = 0.7
+        self.randomness = 0  # 0 - deterministic, 1 - fully random
+        self.randomness_cooldown = 1
 
     def collect_experience(self, observation):
         """

@@ -1,4 +1,3 @@
-
 Prueba 1
 MiniGrid-FourRooms-v0
 60 runs
