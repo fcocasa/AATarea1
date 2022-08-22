@@ -77,7 +77,7 @@ class G08L1Model(L1Model):
         s = steps_over(observation['image'], agent_pos)
 
         #values = [gf,gr,gb,gl,f,r,l,b,1]
-        values = [gx, gy, f, r, 1]
+        values = [gx, gy, f, r, l, 1]
 
         value = 0
         for i in range(len(values)):

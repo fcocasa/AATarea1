@@ -14,8 +14,68 @@ def print_world(image, agent_dir, agent_pos):
             print(cell_render, end='   ')
 
 
-def matrix_value(i, j, matrix):  # USES X,Y NOTATION
+def matrix_value(i, j, matrix, agent_pos=None):  # USES X,Y NOTATION
     return matrix[j][i][2]
+
+
+def matrix_value_visibility(i, j, matrix, agent_pos, agent_dir, visibility):
+
+    if agent_dir == 0:  # >
+        if 0 > i-agent_pos[0] and i-agent_pos[0] > visibility[0]:  # out of range
+            return 0  # unseen
+    elif agent_dir == 1:  # ^
+        if 0 > agent_pos[0]-j and agent_pos[0]-j > visibility[1]:  # out of range
+            return 0  # unseen
+    elif agent_dir == 2:   # <
+        if 0 > agent_pos[0]-i and agent_pos[0]-i > visibility[0]:  # out of range
+            return 0  # unseen
+    elif agent_dir == 3:  # v
+        if 0 > i-agent_pos[0] and i-agent_pos[0] > visibility[0]:  # out of range
+            return 0  # unseen
+
+    return matrix[j][i][2]
+
+# agent_dir [0,1,2,3] = [wall_east,wall_south,wall_west,wall_north]
+
+
+def goal_step_distance(observation, agent_pos_x, agent_pos_y, agent_dir):
+    l = len(observation)
+    for i in range(0, l):
+        for j in range(0, l):
+            if matrix_value(i, j, observation) == 8:
+                # we add extra steps needed when not aligned to the direction of the goal
+                if i-agent_pos_x > 0:  # >>>>>
+                    if agent_dir == 0:  # >
+                        extra_step_x = 0
+                    elif agent_dir == 1 or agent_dir == 3:  # ^ v
+                        extra_step_x = 1
+                    else:
+                        extra_step_x = 2  # <
+                else:                  # <<<<<
+                    if agent_dir == 0:  # >
+                        extra_step_x = 2
+                    elif agent_dir == 1 or agent_dir == 3:  # ^ v
+                        extra_step_x = 1
+                    else:
+                        extra_step_x = 0  # <
+
+                if j-agent_pos_y > 0:  # vvvvvv
+                    if agent_dir == 1:  # v
+                        extra_step_y = 0
+                    elif agent_dir == 0 or agent_dir == 2:  # < >
+                        extra_step_y = 1
+                    else:
+                        extra_step_y = 2  # ^
+                else:                   # ^^^^^
+                    if agent_dir == 1:  # v
+                        extra_step_y = 2
+                    elif agent_dir == 0 or agent_dir == 2:  # < >
+                        extra_step_y = 1
+                    else:
+                        extra_step_y = 0  # ^
+
+                return [abs(i-agent_pos_x)+extra_step_x, abs(j-agent_pos_y)+extra_step_y]
+    return[len(observation), len(observation)]
 
 # agent_dir [0,1,2,3] = [wall_east,wall_south,wall_west,wall_north]
 
