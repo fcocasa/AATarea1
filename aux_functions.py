@@ -290,7 +290,7 @@ def adjust_params(params, experience, learning_rate, error):
     [f, r, b, l] = walls_distance(experience['observation']['image'], experience['agent_pos']
                                   [0], experience['agent_pos'][1], experience['agent_dir'])
     s = steps_over(experience['observation']['image'], experience['agent_pos'])
-    x = [gx, gy, f, r, 1]
+    x = [gx, gy, f, r, l, 1]
     print('F----', f)
     # gf,gr,gl   front,right,left -> orden de parametros
     norm = 0
