@@ -60,7 +60,7 @@ for i_run in range(0, args.runs):
 
         if args.gui:
             environment.render()
-            time.sleep(0.1)
+            time.sleep(0.5)
 
         if done:
             break

@@ -19,14 +19,22 @@ DEFAULT_ENV = 'MiniGrid-Empty-6x6-v0'  # 'MiniGrid-Empty-8x8-v0'
 # MiniGrid-Empty-8x8-v0
 # MiniGrid-Empty-16x16-v0
 # MiniGrid-LavaGapS6-v0
-
 # MiniGrid-FourRooms-v0
-
 # Let's get the arguments
+
+# agent_visibility = [
+#     (-2, -2), (-1, -2), (0, -2), (1, -2), (2, -2),
+#     (-2, -1), (-1, -1), (0, -1), (1, -1), (2, -1),
+#     (-2, 0),  (-1, 0),  (0, 0),  (1, 0), (2, 0),
+#     (-2, 1),  (-1, 1),  (0, 1), (1, 1), (2, 1),
+#     (-2, 2),  (-1, 2),  (0, 2), (1, 2), (2, 2),
+# ]
+agent_visibility = None
+
 parser = argparse.ArgumentParser()
 parser.add_argument("--env", type=str, default=DEFAULT_ENV, required=False,
                     help=F"Name of the environment (default: {DEFAULT_ENV})")
-parser.add_argument("--runs", type=int, default=30, required=False,
+parser.add_argument("--runs", type=int, default=40, required=False,
                     help="Number of experiment runs (default: 2)")
 parser.add_argument("--steps", type=int, default=20, required=False,
                     help="Number of max steps per run (default: 20)")
@@ -45,7 +53,7 @@ environment.max_steps = args.steps
 environment = wrappers.SymbolicObsWrapper(environment)
 
 training = G08L1Train(environment, G08L1Algo(), G08L1Model(
-    environment, name="g08_model"), max_runs=args.runs, max_steps=args.steps)
+    environment, name="g08_model"), max_runs=args.runs, max_steps=args.steps, visibility=agent_visibility)
 
 trained_model = training.run()
 trained_model.save()

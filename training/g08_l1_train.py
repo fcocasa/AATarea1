@@ -16,7 +16,7 @@ class G08L1Train(L1Train):
         # We add max_runs and max_steps paramaters
         self.max_runs = kwargs.get('max_runs', 15)
         self.max_steps = kwargs.get('max_steps', 20)
-
+        self.visibility = kwargs.get('visibility',)
         # TODO: Add more parameters if necessary
 
     def run(self):
@@ -36,7 +36,8 @@ class G08L1Train(L1Train):
             for i_step in range(0, self.max_steps):  # CORRE TODO UN JUEGO
                 print(i_step)
                 # Do a step in this world
-                experience = self.collect_experience(observation)
+                experience = self.collect_experience(
+                    observation, self.visibility)
 
                 # Store the experience for learning
                 experiences.append(experience)
@@ -60,6 +61,7 @@ class G08L1Train(L1Train):
             # Let's update the agente after each episode
             # TODO: change this to wherever you need
             # CREO QUE SOLO QUEREMOS EL REWARD, NO TODA LA EXPERIENCIA
-            self.model = self.algorithm.fit(self.model, experiences)
+            self.model = self.algorithm.fit(
+                self.model, experiences, self.visibility)
 
         return self.model

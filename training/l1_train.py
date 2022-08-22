@@ -25,10 +25,10 @@ class L1Train(ABC):
         self.environment = environment
         self.algorithm = algorithm
         self.model = model
-        self.randomness = 0  # 0 - deterministic, 1 - fully random
-        self.randomness_cooldown = 1
+        self.random_forward = 0.4  # 0 - deterministic, 1 - always moves forward
+        self.randomness_cooldown = 0.8
 
-    def collect_experience(self, observation):
+    def collect_experience(self, observation, visibility):
         """
         Performs one step in the given environment and returs the result of such experience
 
@@ -44,8 +44,8 @@ class L1Train(ABC):
 
         # Choose next action
         start_value = self.model.evaluate(
-            observation, self.environment.agent_pos, self.environment.agent_dir)
-        action = self.model.action(observation, self.environment)
+            observation, self.environment.agent_pos, self.environment.agent_dir, visibility)
+        action = self.model.action(observation, self.environment, visibility)
 
         if random.uniform(0, 1) <= self.randomness:
             action = random.choice(
@@ -60,7 +60,7 @@ class L1Train(ABC):
 
         # Add advantage and return to experiences
         next_value = self.model.evaluate(
-            next_observation, self.environment.agent_pos, self.environment.agent_dir)
+            next_observation, self.environment.agent_pos, self.environment.agent_dir, visibility)
 
         exp = {
             'observation': observation,

@@ -14,77 +14,27 @@ def print_world(image, agent_dir, agent_pos):
             print(cell_render, end='   ')
 
 
-def matrix_value(i, j, matrix, agent_pos=None):  # USES X,Y NOTATION
+def matrix_value(i, j, matrix):  # USES X,Y NOTATION
     return matrix[j][i][2]
 
 
-def matrix_value_visibility(i, j, matrix, agent_pos, agent_dir, visibility):
-
-    if agent_dir == 0:  # >
-        if 0 > i-agent_pos[0] and i-agent_pos[0] > visibility[0]:  # out of range
-            return 0  # unseen
-    elif agent_dir == 1:  # ^
-        if 0 > agent_pos[0]-j and agent_pos[0]-j > visibility[1]:  # out of range
-            return 0  # unseen
-    elif agent_dir == 2:   # <
-        if 0 > agent_pos[0]-i and agent_pos[0]-i > visibility[0]:  # out of range
-            return 0  # unseen
-    elif agent_dir == 3:  # v
-        if 0 > i-agent_pos[0] and i-agent_pos[0] > visibility[0]:  # out of range
-            return 0  # unseen
-
-    return matrix[j][i][2]
-
+def matrix_value_visibility(i, j, matrix, agent_pos=None, visibility=None):
+    if visibility is None:
+        return matrix_value(i, j, matrix)
+    else:
+        for c_shift in visibility:
+            c_pos = [c_shift[0]+agent_pos[0], c_shift[1]+agent_pos[1]]
+            if i == c_pos[0] and j == c_pos[1]:  # within range
+                return matrix_value(i, j, matrix)
+        return 0
 # agent_dir [0,1,2,3] = [wall_east,wall_south,wall_west,wall_north]
 
 
-def goal_step_distance(observation, agent_pos_x, agent_pos_y, agent_dir):
+def goal_step_distance(observation, agent_pos_x, agent_pos_y, agent_dir, visibility):
     l = len(observation)
     for i in range(0, l):
         for j in range(0, l):
-            if matrix_value(i, j, observation) == 8:
-                # we add extra steps needed when not aligned to the direction of the goal
-                if i-agent_pos_x > 0:  # >>>>>
-                    if agent_dir == 0:  # >
-                        extra_step_x = 0
-                    elif agent_dir == 1 or agent_dir == 3:  # ^ v
-                        extra_step_x = 1
-                    else:
-                        extra_step_x = 2  # <
-                else:                  # <<<<<
-                    if agent_dir == 0:  # >
-                        extra_step_x = 2
-                    elif agent_dir == 1 or agent_dir == 3:  # ^ v
-                        extra_step_x = 1
-                    else:
-                        extra_step_x = 0  # <
-
-                if j-agent_pos_y > 0:  # vvvvvv
-                    if agent_dir == 1:  # v
-                        extra_step_y = 0
-                    elif agent_dir == 0 or agent_dir == 2:  # < >
-                        extra_step_y = 1
-                    else:
-                        extra_step_y = 2  # ^
-                else:                   # ^^^^^
-                    if agent_dir == 1:  # v
-                        extra_step_y = 2
-                    elif agent_dir == 0 or agent_dir == 2:  # < >
-                        extra_step_y = 1
-                    else:
-                        extra_step_y = 0  # ^
-
-                return [abs(i-agent_pos_x)+extra_step_x, abs(j-agent_pos_y)+extra_step_y]
-    return[len(observation), len(observation)]
-
-# agent_dir [0,1,2,3] = [wall_east,wall_south,wall_west,wall_north]
-
-
-def goal_step_distance(observation, agent_pos_x, agent_pos_y, agent_dir):
-    l = len(observation)
-    for i in range(0, l):
-        for j in range(0, l):
-            if matrix_value(i, j, observation) == 8:
+            if matrix_value_visibility(i, j, observation, visibility) == 8:
                 # we add extra steps needed when not aligned to the direction of the goal
                 if i-agent_pos_x > 0:  # >>>>>
                     if agent_dir == 0:  # >
@@ -157,38 +107,38 @@ def goal_distance_orientation(observation, agent_pos_x, agent_pos_y, agent_dir):
     return goal_dir
 
 
-def walls_axis(observation, agent_pos_x, agent_pos_y):
+def walls_axis(observation, agent_pos_x, agent_pos_y, visibility):
     l = len(observation)
     wall = []
     for i in range(agent_pos_x, l):
-        if matrix_value(i, agent_pos_y, observation) == 2 or matrix_value(i, agent_pos_y, observation) == 9 or matrix_value(i, agent_pos_y, observation) == 0:  # wall, lava or unseen
+        if matrix_value_visibility(i, agent_pos_y, observation, visibility) == 2 or matrix_value_visibility(i, agent_pos_y, observation, visibility) == 9 or matrix_value_visibility(i, agent_pos_y, observation, visibility) == 0:  # wall, lava or unseen
             wall.append(i-agent_pos_x)
             break
 
-        elif matrix_value(i, agent_pos_y, observation) == 0:
+        elif matrix_value_visibility(i, agent_pos_y, observation, visibility) == 0:
             wall.append(i-agent_pos_x)
             break
     for j in range(agent_pos_y, l):
-        if matrix_value(agent_pos_x, j, observation) == 2 or matrix_value(i, agent_pos_y, observation) == 9 or matrix_value(agent_pos_x, j, observation) == 0:  # wall, lava or unseen
+        if matrix_value_visibility(agent_pos_x, j, observation, visibility) == 2 or matrix_value_visibility(i, agent_pos_y, observation, visibility) == 9 or matrix_value_visibility(agent_pos_x, j, observation, visibility) == 0:  # wall, lava or unseen
             wall.append(j-agent_pos_y)
             break
-        elif matrix_value(agent_pos_x, j, observation) == 0:  # unseen
+        elif matrix_value_visibility(agent_pos_x, j, observation, visibility) == 0:  # unseen
             wall.append(j-agent_pos_y)
             break
 
     for i in range(agent_pos_x, -1, -1):
-        if matrix_value(i, agent_pos_y, observation) == 2 or matrix_value(i, agent_pos_y, observation) == 9 or matrix_value(agent_pos_x, j, observation) == 0:  # wall, lava or unseen
+        if matrix_value_visibility(i, agent_pos_y, observation, visibility) == 2 or matrix_value_visibility(i, agent_pos_y, observation, visibility) == 9 or matrix_value_visibility(agent_pos_x, j, observation, visibility) == 0:  # wall, lava or unseen
             wall.append(agent_pos_x-i)
             break
-        elif matrix_value(i, agent_pos_y, observation) == 0:  # unseen
+        elif matrix_value_visibility(i, agent_pos_y, observation, visibility) == 0:  # unseen
             wall.append(agent_pos_x-i)
             break
 
     for j in range(agent_pos_y, -1, -1):
-        if matrix_value(agent_pos_x, j, observation) == 2 or matrix_value(agent_pos_x, j, observation) == 9 or matrix_value(agent_pos_x, j, observation) == 0:  # wall, lava or unseen
+        if matrix_value_visibility(agent_pos_x, j, observation, visibility) == 2 or matrix_value_visibility(agent_pos_x, j, observation, visibility) == 9 or matrix_value_visibility(agent_pos_x, j, observation, visibility) == 0:  # wall, lava or unseen
             wall.append(agent_pos_y-j)
             break
-        elif matrix_value(agent_pos_x, j, observation) == 0:  # unseen
+        elif matrix_value_visibility(agent_pos_x, j, observation, visibility) == 0:  # unseen
             wall.append(agent_pos_y-j)
             break
 
@@ -197,8 +147,8 @@ def walls_axis(observation, agent_pos_x, agent_pos_y):
 
 # calcula la distancia a cada parede segun su sentido de la orietacion
 # world -> obs['image'] invertido
-def walls_distance(observation, agent_pos_x, agent_pos_y, agent_dir):
-    walls = walls_axis(observation, agent_pos_x, agent_pos_y)
+def walls_distance(observation, agent_pos_x, agent_pos_y, agent_dir, visibility):
+    walls = walls_axis(observation, agent_pos_x, agent_pos_y, visibility)
     wall_dirs = []
     for i in range(agent_dir, agent_dir+4):
         wall_dirs.append(walls[i % 4])
@@ -246,11 +196,10 @@ def move_forward(observation, agent_pos, agent_dir):
         return [agent_pos[0], agent_pos[1]-1]
 # even if i setp into lava or through a wall
 
-
-def steps_over(observation, agent_pos):
-    # returns if we are stepping on lava o over a wall
-    return matrix_value(agent_pos[0], agent_pos[1], observation) == 2 or matrix_value(
-        agent_pos[0]+1, agent_pos[1], observation) == 9
+# def steps_over(observation, agent_pos):
+#     # returns if we are stepping on lava o over a wall
+#     return matrix_value(agent_pos[0], agent_pos[1], observation) == 2 or matrix_value(
+#         agent_pos[0]+1, agent_pos[1], observation) == 9
 
 
 def do_i_step_out_of_floor(observation, agent_pos, agent_dir):
@@ -284,14 +233,13 @@ def do_i_step_out_of_floor(observation, agent_pos, agent_dir):
     # }
 
 
-def adjust_params(params, experience, learning_rate, error):
-    [gx, gy, gf, gr, gb, gl] = goal_distance_orientation(
-        experience['observation']['image'], experience['agent_pos'][0], experience['agent_pos'][1], experience['agent_dir'])
+def adjust_params(params, experience, learning_rate, error, visibility):
+    [gx, gy] = goal_step_distance(
+        experience['observation']['image'], experience['agent_pos'][0], experience['agent_pos'][1], experience['agent_dir'], visibility)
     [f, r, b, l] = walls_distance(experience['observation']['image'], experience['agent_pos']
-                                  [0], experience['agent_pos'][1], experience['agent_dir'])
-    s = steps_over(experience['observation']['image'], experience['agent_pos'])
-    x = [gx, gy, f, r, l, 1]
-    print('F----', f)
+                                  [0], experience['agent_pos'][1], experience['agent_dir'], visibility)
+    x = [gx, gy, f, r, 1]
+    print('gx, gy ---', gx, gy)
     # gf,gr,gl   front,right,left -> orden de parametros
     norm = 0
     for i in range(len(x)):
