@@ -18,7 +18,7 @@ class L1Model(ABC):
         pass
 
     @abstractmethod
-    def evaluate(self, observation):
+    def evaluate(self, observation, agent_pos, agent_dir, visibility):
         """
         Evaluates the given observation and returns its value.
         """

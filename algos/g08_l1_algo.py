@@ -18,7 +18,7 @@ class G08L1Algo(L1Algo):
         self.discount_factor = 0.9
         self.learning_cooldown = 0.8
 
-    def fit(self, model, experiences):  # we want to maximize the reward. (WIN FAST)
+    def fit(self, model, experiences, visibility):  # we want to maximize the reward. (WIN FAST)
         """
         Fits the given model to the new experiences.
         This is your algorithm. You will have to implement everything here
@@ -35,9 +35,9 @@ class G08L1Algo(L1Algo):
         else:
             print('----------perdi----------')
             [gx, gy] = goal_step_distance(experiences[-1]['observation']['image'],
-                                          experiences[-1]['agent_pos'][0], experiences[-1]['agent_pos'][1], experiences[-1]['agent_dir'])
+                                          experiences[-1]['agent_pos'][0], experiences[-1]['agent_pos'][1], experiences[-1]['agent_dir'], visibility)
             taxi = gx + gy  # [1, world_len*world_len]
-            eucl = math.sqrt(gx*gx + gy*gy)
+            #eucl = math.sqrt(gx*gx + gy*gy)
             # nocion de cercania para la penalizacion, si no quedo lejos, no penalizo "tanto"
             v_train = -1 + self.closeness_reward/taxi
 
@@ -48,9 +48,9 @@ class G08L1Algo(L1Algo):
 
         for i in range(len(experiences)-1, -1, -1):  # recorro el arreglo en sentido inverso
             v_actual = model.evaluate(
-                experiences[i]['observation'], experiences[i]['agent_pos'], experiences[i]['agent_dir'])
+                experiences[i]['observation'], experiences[i]['agent_pos'], experiences[i]['agent_dir'], visibility)
             model.params = adjust_params(
-                model.params, experiences[i], self.learning_rate, v_train-v_actual)
+                model.params, experiences[i], self.learning_rate, v_train-v_actual, visibility)
 
             if (last_pos[0] == experiences[i]['agent_pos'][0] and last_pos[1] == experiences[i]['agent_pos'][1]):
                 same_pos += 1
@@ -60,7 +60,7 @@ class G08L1Algo(L1Algo):
             last_pos = experiences[i]['agent_pos']
 
             v_train = model.evaluate(
-                experiences[i]['observation'], experiences[i]['agent_pos'], experiences[i]['agent_dir'])
+                experiences[i]['observation'], experiences[i]['agent_pos'], experiences[i]['agent_dir'], visibility)
 
             # v_train = model.evaluate(experiences[i]['observation'], experiences[i]['agent_pos'], experiences[i]['agent_dir'])
             if (same_pos < 3):  # apply discount factor only if we are not stuck in a position

@@ -1,6 +1,6 @@
 import json
 from models.l1_model import L1Model
-from aux_functions import goal_step_distance, walls_distance, move_forward, walls_axis, goal_distance_orientation, steps_over, try_forward
+from aux_functions import goal_step_distance, walls_distance, move_forward, walls_axis, goal_distance_orientation, try_forward
 from gym_minigrid import wrappers
 import numpy as np
 import random
@@ -28,7 +28,7 @@ class G08L1Model(L1Model):
         self.last_action_forward = 0
         self.load()
 
-    def action(self, observation, environment):
+    def action(self, observation, environment, visibility):
         print('observation', observation)
         """
         Selects and action to perform given the state of the world.
@@ -37,17 +37,17 @@ class G08L1Model(L1Model):
         agent_current_pos = environment.agent_pos  # x,y
         agent_current_dir = environment.agent_dir  # 0 f, 1 r, 2 b, 3 l
         value_left = self.evaluate(
-            observation, agent_current_pos, (agent_current_dir-1) % 4)
+            observation, agent_current_pos, (agent_current_dir-1) % 4, visibility)
 
         value_right = self.evaluate(
-            observation, agent_current_pos, (agent_current_dir+1) % 4)
+            observation, agent_current_pos, (agent_current_dir+1) % 4, visibility)
 
         new_agent_pos = try_forward(
             observation['image'], agent_current_pos, agent_current_dir)
 
         # if new_agent_pos[0] != agent_current_pos[0] or new_agent_pos[1] != agent_current_pos[1]:
         value_forward = self.evaluate(
-            observation, new_agent_pos, agent_current_dir)
+            observation, new_agent_pos, agent_current_dir, visibility)
         # else:
         #     value_forward = min(value_left, value_right)  # TODO CHHECK IF OK
 
@@ -63,18 +63,17 @@ class G08L1Model(L1Model):
 
     # evaluate(self, observation, environment):
 
-    def evaluate(self, observation, agent_pos, agent_dir):
+    def evaluate(self, observation, agent_pos, agent_dir, visibility):
         """
         Evaluates the given observation and returns its value.
         """
         [gx, gy] = goal_step_distance(observation['image'],
-                                      agent_pos[0], agent_pos[1], agent_dir)
+                                      agent_pos[0], agent_pos[1], agent_dir, visibility)
         [f, r, b, l] = walls_distance(
-            observation['image'], agent_pos[0], agent_pos[1], agent_dir)
+            observation['image'], agent_pos[0], agent_pos[1], agent_dir, visibility)
 
         # [gx, gy, gf, gr, gb, gl] = goal_distance_orientation(observation['image'], agent_pos[0], agent_pos[1], agent_dir)
         # if steps over lava or wall
-        s = steps_over(observation['image'], agent_pos)
 
         #values = [gf,gr,gb,gl,f,r,l,b,1]
         values = [gx, gy, f, r, l, 1]
