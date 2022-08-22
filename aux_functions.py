@@ -161,14 +161,14 @@ def adjust_params(params, experience, learning_rate, error):
     x = [gx, gy, f, r, l, 1]
     # gf,gr,gl   front,right,left -> orden de parametros
     norm = 0
-    for i in range(6):
+    for i in range(len(x)):
         params[i] = params[i] + learning_rate*error*x[i]
         norm += params[i]**2  # allows params to be within [-1,1]
 
     norm = math.sqrt(norm)
 
     # avoid overflow in params
-    for i in range(6):
+    for i in range(len(x)):
         params[i] = params[i]/norm
 
     return params

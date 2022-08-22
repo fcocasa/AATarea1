@@ -49,7 +49,6 @@ class L1Train(ABC):
         action = self.model.action(observation, self.environment)
 
         if random.uniform(0, 1) <= self.randomness:
-            time.sleep(0.2)
             action = random.choice(
                 [self.environment.actions.right, self.environment.actions.forward, self.environment.actions.left])
 
