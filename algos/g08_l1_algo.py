@@ -15,8 +15,8 @@ class G08L1Algo(L1Algo):
         self.learning_rate = 0.1
         # 0 =we do not care if you lose but are close to goal, 1= we do care
         self.closeness_reward = 0.8
-        self.discount_factor = 0.9
-        self.learning_cooldown = 0.9
+        self.discount_factor = 0.98
+        self.learning_cooldown = 0.8
 
     def fit(self, model, experiences, visibility):  # we want to maximize the reward. (WIN FAST)
         """
