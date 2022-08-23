@@ -35,38 +35,7 @@ def goal_step_distance(observation, agent_pos_x, agent_pos_y, agent_dir, visibil
     for i in range(0, l):
         for j in range(0, l):
             if matrix_value_visibility(i, j, observation, visibility) == 8:
-                # we add extra steps needed when not aligned to the direction of the goal
-                if i-agent_pos_x > 0:  # >>>>>
-                    if agent_dir == 0:  # >
-                        extra_step_x = 0
-                    elif agent_dir == 1 or agent_dir == 3:  # ^ v
-                        extra_step_x = 1
-                    else:
-                        extra_step_x = 2  # <
-                else:                  # <<<<<
-                    if agent_dir == 0:  # >
-                        extra_step_x = 2
-                    elif agent_dir == 1 or agent_dir == 3:  # ^ v
-                        extra_step_x = 1
-                    else:
-                        extra_step_x = 0  # <
-
-                if j-agent_pos_y > 0:  # vvvvvv
-                    if agent_dir == 1:  # v
-                        extra_step_y = 0
-                    elif agent_dir == 0 or agent_dir == 2:  # < >
-                        extra_step_y = 1
-                    else:
-                        extra_step_y = 2  # ^
-                else:                   # ^^^^^
-                    if agent_dir == 1:  # v
-                        extra_step_y = 2
-                    elif agent_dir == 0 or agent_dir == 2:  # < >
-                        extra_step_y = 1
-                    else:
-                        extra_step_y = 0  # ^
-
-                return [abs(i-agent_pos_x)+extra_step_x, abs(j-agent_pos_y)+extra_step_y]
+                return [abs(i-agent_pos_x), abs(j-agent_pos_y)]
     return[len(observation), len(observation)]
 
 
