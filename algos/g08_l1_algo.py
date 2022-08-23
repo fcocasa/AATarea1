@@ -12,7 +12,7 @@ class G08L1Algo(L1Algo):
 
     def __init__(self, **kwargs):
         super().__init__()
-        self.learning_rate = 0.4
+        self.learning_rate = 0.1
         # 0 =we do not care if you lose but are close to goal, 1= we do care
         self.closeness_reward = 0.8
         self.discount_factor = 0.9
