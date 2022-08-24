@@ -29,7 +29,7 @@ class G08L1Model(L1Model):
         self.load()
 
     def action(self, observation, environment, visibility):
-        print('observation', observation)
+        # print('observation', observation)
         """
         Selects and action to perform given the state of the world.
         """
@@ -45,11 +45,8 @@ class G08L1Model(L1Model):
         new_agent_pos = try_forward(
             observation['image'], agent_current_pos, agent_current_dir)
 
-        # if new_agent_pos[0] != agent_current_pos[0] or new_agent_pos[1] != agent_current_pos[1]:
         value_forward = self.evaluate(
             observation, new_agent_pos, agent_current_dir, visibility)
-        # else:
-        #     value_forward = min(value_left, value_right)  # TODO CHHECK IF OK
 
         if value_forward == max(value_left, value_right, value_forward):
             self.last_action_forward = 0
@@ -61,8 +58,6 @@ class G08L1Model(L1Model):
             self.last_action_forward += 1
             return self.environment.actions.left
 
-    # evaluate(self, observation, environment):
-
     def evaluate(self, observation, agent_pos, agent_dir, visibility):
         """
         Evaluates the given observation and returns its value.
@@ -71,11 +66,7 @@ class G08L1Model(L1Model):
                                       agent_pos[0], agent_pos[1], agent_dir, visibility)
         [f, r, b, l] = walls_distance(
             observation['image'], agent_pos[0], agent_pos[1], agent_dir, visibility)
-
-        # [gx, gy, gf, gr, gb, gl] = goal_distance_orientation(observation['image'], agent_pos[0], agent_pos[1], agent_dir)
-        # if steps over lava or wall
-
-        #values = [gf,gr,gb,gl,f,r,l,b,1]
+            
         values = [gx, gy, f, r, l, 1]
 
         value = 0

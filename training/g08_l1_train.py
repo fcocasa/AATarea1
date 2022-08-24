@@ -25,8 +25,6 @@ class G08L1Train(L1Train):
         In this implementation, the model is adjusted after each episode, but feel free to change it.
         """
         for i_run in range(0, self.max_runs):
-            print('max runs: ' + str(self.max_runs))
-            print(i_run)
             # Restart the environment
             observation = self.environment.reset()
 
@@ -34,7 +32,6 @@ class G08L1Train(L1Train):
             experiences = []
             game_rewards = []
             for i_step in range(0, self.max_steps):  # CORRE TODO UN JUEGO
-                print(i_step)
                 # Do a step in this world
                 experience = self.collect_experience(
                     observation, self.visibility)
@@ -44,7 +41,6 @@ class G08L1Train(L1Train):
 
                 print(
                     f"run:{i_run} step:{i_step} pos:{self.environment.agent_pos} dir:{self.environment.agent_dir} done:{experience['done']} action:{experience['action']}")
-                #print_world(observation['image'], self.environment.agent_dir, self.environment.agent_pos)
                 self.environment.render()
                 time.sleep(0.005)
                 # We finished before reaching max_steps
@@ -59,8 +55,6 @@ class G08L1Train(L1Train):
                 observation = experience['next_observation']
 
             # Let's update the agente after each episode
-            # TODO: change this to wherever you need
-            # CREO QUE SOLO QUEREMOS EL REWARD, NO TODA LA EXPERIENCIA
             self.model = self.algorithm.fit(
                 self.model, experiences, self.visibility)
 

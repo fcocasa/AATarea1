@@ -4,14 +4,11 @@ import time
 
 AGENT_DIR_TO_STR = {0: ">", 1: "V", 2: "<", 3: "^"}
 
-
 def print_world(image, agent_dir, agent_pos):
     for y_axis in image:
-        print("\n\t")
         for cell in y_axis:
             cell_render = AGENT_DIR_TO_STR[agent_dir] if (cell[1] == agent_pos[0] and cell[0] == agent_pos[1]) \
                 else IDX_TO_OBJECT[cell[2]][0].upper() if cell[2] > -1 else '_'
-            print(cell_render, end='   ')
 
 
 def matrix_value(i, j, matrix):  # USES X,Y NOTATION
@@ -27,7 +24,6 @@ def matrix_value_visibility(i, j, matrix, agent_pos=None, visibility=None):
             if i == c_pos[0] and j == c_pos[1]:  # within range
                 return matrix_value(i, j, matrix)
         return 0
-# agent_dir [0,1,2,3] = [wall_east,wall_south,wall_west,wall_north]
 
 
 def goal_step_distance(observation, agent_pos_x, agent_pos_y, agent_dir, visibility):
@@ -61,18 +57,6 @@ def goal_distance_orientation(observation, agent_pos_x, agent_pos_y, agent_dir):
     goal_dir = [abs(i-agent_pos_x), abs(j-agent_pos_y)]
     for i in range(agent_dir, agent_dir+4):
         goal_dir.append(goal[i % 4])
-    # print('goalx')
-    # print(x)
-    # print('goaly')
-    # print(y)
-    # print('agent_pos_x')
-    # print(agent_pos_x)
-    # print('agent_pos_y')
-    # print(agent_pos_y)
-    # print('goal')
-    # print(goal)
-    # print('goal_dir')
-    # print(goal_dir)
     return goal_dir
 
 
@@ -125,12 +109,10 @@ def walls_distance(observation, agent_pos_x, agent_pos_y, agent_dir, visibility)
     # walls[1] surt
     # walls[2] oeste
     # walls[3] norte
-    # print(walls)#(este, sur, oeste, norte)
     return wall_dirs  # (frente,derecha,atras,izquierda)
 
 
 def try_forward(observation, agent_pos, agent_dir):
-    # print(observation)
     # (este, sur, oeste, norte)
     if (agent_dir == 0):  # derecha
         if(matrix_value(agent_pos[0]+1, agent_pos[1], observation) != 2):
@@ -151,9 +133,8 @@ def try_forward(observation, agent_pos, agent_dir):
     return agent_pos  # en caso de no entrar a uno de los if retorno el mismo agent_pos
 
 
-# even if i setp into lava or through a wall
+# even if i step into lava or through a wall
 def move_forward(observation, agent_pos, agent_dir):
-    # print(observation)
     # (este, sur, oeste, norte)
     if (agent_dir == 0):  # derecha
         return [agent_pos[0]+1, agent_pos[1]]
@@ -163,16 +144,8 @@ def move_forward(observation, agent_pos, agent_dir):
         return [agent_pos[0], agent_pos[1]+1]
     elif(agent_dir == 3):  # arriba
         return [agent_pos[0], agent_pos[1]-1]
-# even if i setp into lava or through a wall
-
-# def steps_over(observation, agent_pos):
-#     # returns if we are stepping on lava o over a wall
-#     return matrix_value(agent_pos[0], agent_pos[1], observation) == 2 or matrix_value(
-#         agent_pos[0]+1, agent_pos[1], observation) == 9
-
 
 def do_i_step_out_of_floor(observation, agent_pos, agent_dir):
-    # print(observation)
     # (este, sur, oeste, norte)
     if (agent_dir == 0):  # derecha
         if matrix_value(agent_pos[0]+1, agent_pos[1], observation) == 2 or matrix_value(agent_pos[0]+1, agent_pos[1], observation) == 9:
@@ -189,25 +162,12 @@ def do_i_step_out_of_floor(observation, agent_pos, agent_dir):
 
     return 0  # you keep walking on the floor
 
-  # last_experience = {
-    #     'observation': observation,
-    #     'agent_pos': self.environment.agent_pos,
-    #     'agent_dir': self.environment.agent_dir,
-    #     'value': start_value,
-    #     'action': action,
-    #     'next_observation': next_observation,
-    #     'next_value': reward if done else next_value,
-    #     'done': done,
-    #     'reward': reward
-    # }
-
-
 def adjust_params(params, experience, learning_rate, error, visibility):
     [gx, gy] = goal_step_distance(
         experience['observation']['image'], experience['agent_pos'][0], experience['agent_pos'][1], experience['agent_dir'], visibility)
     [f, r, b, l] = walls_distance(experience['observation']['image'], experience['agent_pos']
                                   [0], experience['agent_pos'][1], experience['agent_dir'], visibility)
-    x = [gx, gy, f, r, 1]
+    x = [gx, gy, f, r, l, 1]
     # gf,gr,gl   front,right,left -> orden de parametros
     norm = 0
     for i in range(len(x)):

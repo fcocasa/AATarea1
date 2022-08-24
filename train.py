@@ -29,12 +29,12 @@ DEFAULT_ENV = 'MiniGrid-Empty-Random-6x6-v0'  # 'MiniGrid-Empty-8x8-v0'
 #     (-2, 1),  (-1, 1),  (0, 1), (1, 1), (2, 1),
 #     (-2, 2),  (-1, 2),  (0, 2), (1, 2), (2, 2),
 # ]
-# agent_visibility = [
-#     (-1, -1), (0, -1), (1, -1),
-#     (-1, 0),  (0, 0),  (1, 0),
-#     (-1, 1),  (0, 1), (1, 1),
-# ]
-agent_visibility = None
+agent_visibility = [
+    (-1, -1), (0, -1), (1, -1),
+    (-1, 0),  (0, 0),  (1, 0),
+    (-1, 1),  (0, 1), (1, 1),
+]
+# agent_visibility = None
 
 parser = argparse.ArgumentParser()
 parser.add_argument("--env", type=str, default=DEFAULT_ENV, required=False,
