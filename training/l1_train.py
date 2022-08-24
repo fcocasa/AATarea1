@@ -48,8 +48,7 @@ class L1Train(ABC):
         action = self.model.action(observation, self.environment, visibility)
 
         if random.uniform(0, 1) <= self.random_forward:
-            action = random.choice(
-                [self.environment.actions.right, self.environment.actions.forward, self.environment.actions.left])
+            action = self.environment.actions.forward
 
         # Perform the action
         # Reward es un valor entre 0 y 1 que indica que tan rapido se llegó a destino
