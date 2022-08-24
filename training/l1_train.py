@@ -25,8 +25,8 @@ class L1Train(ABC):
         self.environment = environment
         self.algorithm = algorithm
         self.model = model
-        self.random_forward = 0.4  # 0= deterministic, 1= always moves forward
-        self.randomness_cooldown = 0.95  # 1=no cooldown 0=only random factor until we win
+        self.random_forward = 0.1  # 0= deterministic, 1= always moves forward
+        self.randomness_cooldown = 0.9  # 1=no cooldown 0=only random factor until we win
 
     def collect_experience(self, observation, visibility):
         """

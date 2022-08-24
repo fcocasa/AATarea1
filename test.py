@@ -3,9 +3,9 @@
 import argparse
 from ast import arg
 from xmlrpc.client import Boolean
-from models.g08_l1_model import GXL1Model
-from algos.g08_l1_algo import GXL1Algo
-from training.g08_l1_train import GXL1Train
+from models.g08_l1_model import G08L1Model
+from algos.g08_l1_algo import G08L1Algo
+from training.g08_l1_train import G08L1Train
 
 import gym
 import time
@@ -14,7 +14,7 @@ import time
 from gym_minigrid import envs, wrappers
 
 
-DEFAULT_ENV = 'MiniGrid-Empty-8x8-v0'
+DEFAULT_ENV = 'MiniGrid-Empty-Random-6x6-v0'
 
 # Let's get the arguments
 parser = argparse.ArgumentParser()
@@ -22,7 +22,7 @@ parser.add_argument("--model", type=str, default=None,
                     required=False, help=F"Model name)")
 parser.add_argument("--env", type=str, default=DEFAULT_ENV, required=False,
                     help=F"Name of the environment (default: {DEFAULT_ENV})")
-parser.add_argument("--runs", type=int, default=2, required=False,
+parser.add_argument("--runs", type=int, default=100, required=False,
                     help="Number of experiment runs (default: 2)")
 parser.add_argument("--steps", type=int, default=20, required=False,
                     help="Number of max steps per run (default: 20)")
@@ -44,18 +44,24 @@ environment = gym.make(args.env, seed=seed, render_mode="human")
 environment.max_steps = args.steps
 environment = wrappers.SymbolicObsWrapper(environment)
 
+agent_visibility = [
+    (-1, -1), (0, -1), (1, -1),
+    (-1, 0),  (0, 0),  (1, 0),
+    (-1, 1),  (0, 1), (1, 1),
+]
+# agent_visibility = "None"
 
 m_kargs = {'cheat_mode': args.cheat}
 if args.model:
     m_kargs['model'] = args.model
-trained_model = GXL1Model(environment, **m_kargs)
+trained_model = G08L1Model(environment, **m_kargs)
 
 for i_run in range(0, args.runs):
     obs = environment.reset()
     reward = 0
 
     for i_step in range(0, args.steps):
-        next_action = trained_model.action(obs)
+        next_action = trained_model.action(obs, environment, agent_visibility)
         obs, reward, done, info = environment.step(next_action)
 
         if args.gui:
@@ -65,7 +71,7 @@ for i_run in range(0, args.runs):
         if done:
             break
 
-    print(f"Game over with reward {reward}")
+    print(f"Game over with reward {reward}-")
 
     if args.gui:
         time.sleep(2)

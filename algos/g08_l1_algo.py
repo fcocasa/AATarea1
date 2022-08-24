@@ -13,8 +13,7 @@ class G08L1Algo(L1Algo):
     def __init__(self, **kwargs):
         super().__init__()
         self.learning_rate = 0.1
-        # 0 =we do not care if you lose but are close to goal, 1= we do care
-        self.closeness_reward = 0.8
+        self.closeness_reward = 0.3
         self.discount_factor = 0.98
         self.learning_cooldown = 0.8
 
@@ -28,20 +27,15 @@ class G08L1Algo(L1Algo):
         print(all_params)
 
         if experiences[-1]['reward'] != 0:  # el ultimo reward me indica si llegue a la meta
-            print('----------Llegue!!!----------')
+            print('----------Llegue----------')
             v_train = experiences[-1]['reward']
-            print('reward')
-            print(experiences[-1]['reward'])
         else:
             print('----------perdi----------')
             [gx, gy] = goal_step_distance(experiences[-1]['observation']['image'],
                                           experiences[-1]['agent_pos'][0], experiences[-1]['agent_pos'][1], experiences[-1]['agent_dir'], visibility)
-            taxi = gx + gy  # [1, world_len*world_len]
-            #eucl = math.sqrt(gx*gx + gy*gy)
+            taxi = gx + gy
             # nocion de cercania para la penalizacion, si no quedo lejos, no penalizo "tanto"
             v_train = -1 + self.closeness_reward/taxi
-
-            print('v_train', v_train)
 
         same_pos = -1  # keeps track of the agent being stuck on same position
         last_pos = experiences[-1]['agent_pos']
@@ -61,13 +55,8 @@ class G08L1Algo(L1Algo):
 
             v_train = model.evaluate(
                 experiences[i]['observation'], experiences[i]['agent_pos'], experiences[i]['agent_dir'], visibility)
-
-            # v_train = model.evaluate(experiences[i]['observation'], experiences[i]['agent_pos'], experiences[i]['agent_dir'])
             if (same_pos < 3):  # apply discount factor only if we are not stuck in a position
                 v_train = v_train*self.discount_factor
-
-        print('model.params')
-        print(model.params)
 
         # I reduce learning rate only if I won (I've learnt something)
         if (experiences[-1]['reward'] > 0):

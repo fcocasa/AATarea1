@@ -1,37 +1,14 @@
-Some examples of how to use gym and gym-minigrid.
+Como ejecutar el codigo y correr pruebas?
 
-
-====================================
-INSTALL
-
-You will need gym and gym-minigrid
-
-Gym (0.25.1) can be install directly using pip3: pip3 install gym
-There are some compatibility issues, so install gym-minigrid manually from: https://github.com/Farama-Foundation/gym-minigrid
-
-    git clone https://github.com/maximecb/gym-minigrid.git
-    cd gym-minigrid
-    pip3 install -e .
-
-
-
-====================================
-EXAMPLES
-
-You will find:
-
-- run_me.py, which shows how to read the different variables around mini-grid world (position, objects, rewards, etc.)
-
-- train.py, and example of how to train a model (it will show the results of the dummy implementation)
-
-- test.py, will show the results of the train model, in a GUI if you like 
-
-They will run without arguments, but, please, check them and try them with different values. In particular, try different mini-grid worlds.
-
-
-
-====================================
-IMPLEMENTATION
-
-You will need to implement the algorithm, model and training method... Copy the classes G08L1Algo, G08L1Model and G08L1Train, rename it with your group number
- (for example, for group 99 classes will be renamed as G99L1Algo, G99L1Model, G99L1Train) and implement missing parts or adapt the code for your needs.
+- Setear las variables para la prueba, tanto los pesos en el json como params en el modelo y el algoritmo
+- En el root del proyecto ejecutar 
+```bash
+python3 train.py > /pruebas/train.txt
+```
+- El archivo generado contiene el resultado del entrenamiento, y se puede usar para obtener informacion sobre el progreso de los parametros wi (ver parse_results_for_graph.py)
+- Copiar los parametros obtenidos en `g08_model.json` a `my_model.json` (este es el archivo que busca test.py)
+- En el root del proyecto ejecutar 
+```bash
+python3 train.py > /pruebas/test.txt
+```
+- El archivo generado contiene el resultado de los tests y puede ser usado para establecer el rendimiento de la solucion entrenada
