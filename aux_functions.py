@@ -207,7 +207,7 @@ def adjust_params(params, experience, learning_rate, error, visibility):
         experience['observation']['image'], experience['agent_pos'][0], experience['agent_pos'][1], experience['agent_dir'], visibility)
     [f, r, b, l] = walls_distance(experience['observation']['image'], experience['agent_pos']
                                   [0], experience['agent_pos'][1], experience['agent_dir'], visibility)
-    x = [gx, gy, f, r, 1]
+    x = [gx, gy, f, r, l, 1]
     # gf,gr,gl   front,right,left -> orden de parametros
     norm = 0
     for i in range(len(x)):
